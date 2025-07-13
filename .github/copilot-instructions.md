@@ -112,11 +112,12 @@ Phase 3: PostgreSQL Deployment
 ⸻
 
 Phase 4: CI/CD Pipeline (Azure DevOps)
-• Create a pipeline that:
-• Builds and tests the .NET app
-• Builds a Docker image
-• Pushes it to ACR
-• Inject environment variables securely
+•	Create a pipeline that:
+•	Builds and tests the .NET app
+•	Builds a Docker image
+•	Pushes the image to ACR
+•	Updates helm/todo-api/values.yaml with the new image tag
+•	Commits and pushes the updated values.yaml to Azure Repos
 
 ⸻
 
@@ -124,7 +125,6 @@ Phase 5: Helm Chart Packaging for ToDo API
 • Create custom Helm chart for todo-api
 • Includes Deployment, Service, Ingress, Secret templates
 • Parameters configurable via values.yaml
-• Test the chart locally using helm template or helm install
 
 ⸻
 

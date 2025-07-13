@@ -1,0 +1,19 @@
+apiVersion: v2
+name: postgres
+description: PostgreSQL database for TodoApp
+type: application
+version: 0.1.0
+appVersion: "15.0"
+
+keywords:
+  - postgresql
+  - database
+  - sql
+
+home: https://www.postgresql.org/
+sources:
+  - https://github.com/postgres/postgres
+
+maintainers:
+  - name: DevOps Team
+    email: faresmirza93@gmail.com
