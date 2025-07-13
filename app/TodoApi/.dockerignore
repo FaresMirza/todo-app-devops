@@ -1,0 +1,40 @@
+# .NET Core build artifacts
+bin/
+obj/
+out/
+
+# Visual Studio files
+.vs/
+.vscode/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+
+# IDE files
+*.swp
+*.swo
+*~
+
+# Database files
+*.db
+*.sqlite
+
+# Migration folders (we'll recreate them in container)
+Migrations/
