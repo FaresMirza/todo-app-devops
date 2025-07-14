@@ -8,12 +8,12 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
 # Copy project files and restore dependencies
-COPY ["src/TodoApi/TodoApi.csproj", "src/TodoApi/"]
-RUN dotnet restore "src/TodoApi/TodoApi.csproj"
+COPY ["src/TodoApi/TodoApi.csproj", "TodoApi/"]
+RUN dotnet restore "TodoApi/TodoApi.csproj"
 
 # Copy the rest of the application code
-COPY . .
-WORKDIR "/src/src/TodoApi"
+COPY src/ .
+WORKDIR "/src/TodoApi"
 
 # Build the application
 RUN dotnet build "TodoApi.csproj" -c Release -o /app/build
