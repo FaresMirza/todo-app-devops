@@ -149,21 +149,12 @@ Phase 8: Monitoring Integration
 
 ⸻
 
-Phase 9: Validation & Testing
-• End-to-end test: code → pipeline → deployment → working API
-• Verify DB connectivity and data persistence
-• Validate Ingress routing and ArgoCD sync behavior
-• Test rollback with ArgoCD
-
-⸻
-
-Phase 10: Documentation
+Phase 9: Documentation
 • Prepare README.md with:
-• Project overview
-• Setup and deployment steps
-• Helm chart usage
-• ArgoCD and DNS configuration
-• Azure DevOps and Terraform notes
-• Where best practices were applied
+• Overview of your CI/CD pipeline and GitOps flow
+• Terraform architecture and rationale
+• Any assumptions or simlifiactions
+• Monitoring and observability setup
+• How AI tools supported your work
 
 ⸻
