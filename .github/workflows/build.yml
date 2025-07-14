@@ -31,3 +31,17 @@ jobs:
       - name: Push Docker image
         run: |
           docker push acrtodoappdev001.azurecr.io/todo-api:v${{ github.run_number }}
+
+      - name: Update Helm values.yaml
+        run: |
+          # Update the image tag in Helm values
+          sed -i 's|image: acrtodoappdev001.azurecr.io/todo-api:.*|image: acrtodoappdev001.azurecr.io/todo-api:v${{ github.run_number }}|' helm/todo-api/values.yaml
+
+          # Configure git
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+
+          # Commit and push changes
+          git add helm/todo-api/values.yaml
+          git commit -m "Update image tag to v${{ github.run_number }}" || exit 0
+          git push
