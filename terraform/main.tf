@@ -48,3 +48,4 @@ module "aks" {
   acr_id            = module.acr.acr_id
   tags              = var.tags
 }
+
