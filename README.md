@@ -171,6 +171,9 @@ The automated pipeline performs:
 
 ### Application Chart (todo-api)
 
+**Note:**
+You must update the database section in `helm/todo-api/values.yaml` to match your actual database connection settings (host, name, username, etc). For example, if you use a different database name, user, or host, make sure to update them here before deploying the application.
+
 **Current Configuration:**
 
 ```yaml
@@ -220,6 +223,20 @@ service:
 storage:
   size: 2Gi
 ```
+
+**Important:**
+Before deploying the database chart, you must create a Kubernetes secret named `postgres` containing the database name, user, and password. This is required for the chart to use your credentials securely.
+
+Create the secret with:
+
+```bash
+kubectl create secret generic postgres \
+  --from-literal=POSTGRES_DB=tododb \
+  --from-literal=POSTGRES_USER=todouser \
+  --from-literal=POSTGRES_PASSWORD=todopassword
+```
+
+> The secret **must** be named `postgres` for the chart to work out of the box.
 
 **Deployment:**
 
