@@ -22,13 +22,11 @@ jobs:
           username: ${{ secrets.ACR_USERNAME }}
           password: ${{ secrets.ACR_PASSWORD }}
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - name: Build Docker image
+        run: |
+          export DOCKER_BUILDKIT=0
+          docker build --platform linux/amd64 -t ${{ secrets.ACR_LOGIN_SERVER }}/todo-api:v${{ github.run_number }} ./app
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: ./app
-          push: true
-          tags: ${{ secrets.ACR_LOGIN_SERVER }}/todo-api:v${{ github.run_number }}
-          platforms: linux/amd64
+      - name: Push Docker image
+        run: |
+          docker push ${{ secrets.ACR_LOGIN_SERVER }}/todo-api:v${{ github.run_number }}
