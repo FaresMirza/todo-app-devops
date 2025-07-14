@@ -23,10 +23,14 @@ jobs:
           password: ${{ secrets.ACR_PASSWORD }}
 
       - name: Build Docker image
+        env:
+          DOCKER_BUILDKIT: "0"
+          ACR_SERVER: ${{ secrets.ACR_LOGIN_SERVER }}
         run: |
-          export DOCKER_BUILDKIT=0
-          docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/todo-api:v${{ github.run_number }} ./app
+          docker build -t ${ACR_SERVER}/todo-api:v${{ github.run_number }} ./app
 
       - name: Push Docker image
+        env:
+          ACR_SERVER: ${{ secrets.ACR_LOGIN_SERVER }}
         run: |
-          docker push ${{ secrets.ACR_LOGIN_SERVER }}/todo-api:v${{ github.run_number }}
+          docker push ${ACR_SERVER}/todo-api:v${{ github.run_number }}
