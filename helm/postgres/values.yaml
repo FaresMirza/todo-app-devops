@@ -1,0 +1,11 @@
+postgres:
+  image: postgres:15-alpine
+  database: tododb
+  username: todouser
+  password: todopassword
+
+service:
+  port: 5432
+
+storage:
+  size: 2Gi

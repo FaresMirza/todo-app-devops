@@ -9,17 +9,20 @@ public class TodoContext : DbContext
     {
     }
 
-    public DbSet<TodoItem> TodoItems { get; set; }
+    public DbSet<TodoItem> TodoItems { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
+
         modelBuilder.Entity<TodoItem>(entity =>
         {
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Title).IsRequired().HasMaxLength(200);
             entity.Property(e => e.Description).HasMaxLength(1000);
-            entity.Property(e => e.Priority).HasMaxLength(20);
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.HasIndex(e => e.IsCompleted);
+            entity.HasIndex(e => e.CreatedAt);
         });
     }
 }

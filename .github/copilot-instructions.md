@@ -113,7 +113,6 @@ Phase 3: PostgreSQL Deployment
 
 Phase 4: CI/CD Pipeline (Azure DevOps)
 •	Create a pipeline that:
-•	Builds and tests the .NET app
 •	Builds a Docker image
 •	Pushes the image to ACR
 •	Updates helm/todo-api/values.yaml with the new image tag
@@ -133,7 +132,6 @@ Phase 6: GitOps Deployment via ArgoCD
 • Connect it to Azure Repos using PAT
 • Define ArgoCD Application manifests for:
 • todo-api
-• postgres (optional if GitOps-managed)
 
 ⸻
 

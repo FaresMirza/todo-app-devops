@@ -33,9 +33,11 @@ terraform.tfplan.*
 *.tgz
 charts/*/charts/
 charts/*/requirements.lock
-# Helm values with secrets
-helm/*/values.yaml
-helm/*/values-*.yaml
+# Helm values with secrets only
+helm/*/values-prod.yaml
+helm/*/values-staging.yaml
+helm/*/values-secrets.yaml
+!helm/*/values.yaml
 
 # IDE
 .vscode/

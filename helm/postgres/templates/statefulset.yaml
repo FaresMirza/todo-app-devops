@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: postgres
+  labels:
+    app: postgres
 spec:
   serviceName: postgres
   replicas: 1
@@ -15,31 +17,32 @@ spec:
     spec:
       containers:
         - name: postgres
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          image: {{.Values.postgres.image}}
           ports:
             - containerPort: 5432
-          envFrom:
-            - secretRef:
-                name: postgres-secret
+              name: postgres
           env:
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: postgres
+                  key: POSTGRES_DB
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres
+                  key: POSTGRES_PASSWORD
             - name: PGDATA
               value: /var/lib/postgresql/data/pgdata
           volumeMounts:
             - name: postgres-storage
               mountPath: /var/lib/postgresql/data
-          resources:
-            limits:
-              memory: { { .Values.resources.memory } }
-              cpu: { { .Values.resources.cpu } }
-            requests:
-              memory: { { .Values.resources.memory } }
-              cpu: { { .Values.resources.cpu } }
-  volumeClaimTemplates:
-    - metadata:
-        name: postgres-storage
-      spec:
-        accessModes:
-          - ReadWriteOnce
-        resources:
-          requests:
-            storage: { { .Values.storage.size } }
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: postgres-pvc
