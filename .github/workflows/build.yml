@@ -26,8 +26,8 @@ jobs:
         env:
           DOCKER_BUILDKIT: "0"
         run: |
-          docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/todo-api:v${{ github.run_number }} ./app
+          docker build -t acrtodoappdev001.azurecr.io/todo-api:v${{ github.run_number }} ./app
 
       - name: Push Docker image
         run: |
-          docker push ${{ secrets.ACR_LOGIN_SERVER }}/todo-api:v${{ github.run_number }}
+          docker push acrtodoappdev001.azurecr.io/todo-api:v${{ github.run_number }}
