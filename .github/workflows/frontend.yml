@@ -1,10 +1,10 @@
-name: CI/CD Pipeline For Backend
+name: CI/CD Pipeline For Frontend
 
 on:
   push:
     branches: [main]
     paths:
-      - "backend/**"
+      - "frontend/**"
   workflow_dispatch:
 
 permissions:
@@ -29,16 +29,16 @@ jobs:
         env:
           DOCKER_BUILDKIT: "0"
         run: |
-          docker build -t acrtodoappdev001.azurecr.io/todo-api:v${{ github.run_number }} ./backend
+          docker build -t acrtodoappdev001.azurecr.io/todo-frontend:v${{ github.run_number }} ./frontend
 
       - name: Push Docker image
         run: |
-          docker push acrtodoappdev001.azurecr.io/todo-api:v${{ github.run_number }}
+          docker push acrtodoappdev001.azurecr.io/todo-frontend:v${{ github.run_number }}
 
       - name: Update Helm values.yaml
         run: |
           # Update the image tag in Helm values
-          sed -i 's|image: acrtodoappdev001.azurecr.io/todo-api:.*|image: acrtodoappdev001.azurecr.io/todo-api:v${{ github.run_number }}|' helm/todo-api/values.yaml
+          sed -i 's|image: acrtodoappdev001.azurecr.io/todo-frontend:.*|image: acrtodoappdev001.azurecr.io/todo-frontend:v${{ github.run_number }}|' helm/todo-app/values.yaml
 
           # Configure git
           git config --local user.email "action@github.com"
@@ -46,5 +46,5 @@ jobs:
 
           # Commit and push changes
           git add helm/todo-api/values.yaml
-          git commit -m "Update image tag to v${{ github.run_number }}" || exit 0
+          git commit -m "Update frontend image tag to v${{ github.run_number }}" || exit 0
           git push
