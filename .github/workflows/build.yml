@@ -1,4 +1,4 @@
-name: Build Docker Image
+name: CI/CD Pipeline For Backend
 
 on:
   push:
@@ -29,7 +29,7 @@ jobs:
         env:
           DOCKER_BUILDKIT: "0"
         run: |
-          docker build -t acrtodoappdev001.azurecr.io/todo-api:v${{ github.run_number }} ./app
+          docker build -t acrtodoappdev001.azurecr.io/todo-api:v${{ github.run_number }} ./backend
 
       - name: Push Docker image
         run: |
