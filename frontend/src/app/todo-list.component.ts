@@ -27,20 +27,49 @@ import { FormsModule } from '@angular/forms';
     </form>
     <ul>
       <li *ngFor="let todo of todos">
-        <input
-          type="checkbox"
-          [(ngModel)]="todo.isComplete"
-          (change)="toggleComplete(todo)"
-        />
-        <span [class.completed]="todo.isComplete"
-          >{{ todo.title }}
-          <small *ngIf="todo.completedAt"
-            >(تم الإنجاز: {{ todo.completedAt | date : 'short' }})</small
-          >
-        </span>
-        <button (click)="deleteTodo(todo.id)">Delete</button>
+        <ng-container *ngIf="editId === todo.id; else viewMode">
+          <form (submit)="updateTodo(todo)">
+            <input type="text" [(ngModel)]="todo.title" name="editTitle{{todo.id}}" required />
+            <input type="text" [(ngModel)]="todo.description" name="editDesc{{todo.id}}" />
+            <input type="number" [(ngModel)]="todo.priority" name="editPriority{{todo.id}}" min="1" />
+            <input type="checkbox" [(ngModel)]="todo.isComplete" name="editComplete{{todo.id}}" (change)="toggleComplete(todo)" />
+            <button type="submit">Update</button>
+            <button type="button" (click)="cancelEdit()">Cancel</button>
+          </form>
+        </ng-container>
+        <ng-template #viewMode>
+          <input
+            type="checkbox"
+            [(ngModel)]="todo.isComplete"
+            name="complete{{todo.id}}"
+            (change)="toggleComplete(todo)"
+          />
+          <span [class.completed]="todo.isComplete">
+            {{ todo.title }}
+            <small *ngIf="todo.completedAt">
+              (تم الإنجاز: {{ todo.completedAt | date : 'short' }})
+            </small>
+          </span>
+          <button (click)="editTodo(todo.id)">Edit</button>
+          <button (click)="deleteTodo(todo.id)">Delete</button>
+        </ng-template>
       </li>
     </ul>
+  editId: number | null = null;
+
+  editTodo(id: number) {
+    this.editId = id;
+  }
+
+  cancelEdit() {
+    this.editId = null;
+  }
+
+  updateTodo(todo: TodoItem) {
+    this.todoService.updateTodo(todo).subscribe(() => {
+      this.editId = null;
+    });
+  }
   `,
   styles: [
     `
@@ -55,8 +84,23 @@ export class TodoListComponent implements OnInit {
   newTitle = '';
   newDescription = '';
   newPriority: number | null = null;
+  editId: number | null = null;
 
   constructor(private todoService: TodoService) {}
+
+  editTodo(id: number) {
+    this.editId = id;
+  }
+
+  cancelEdit() {
+    this.editId = null;
+  }
+
+  updateTodo(todo: TodoItem) {
+    this.todoService.updateTodo(todo).subscribe(() => {
+      this.editId = null;
+    });
+  }
 
   ngOnInit() {
     this.loadTodos();
