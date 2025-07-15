@@ -111,6 +111,11 @@ export class TodoListComponent implements OnInit {
   }
 
   toggleComplete(todo: TodoItem) {
+    if (todo.isComplete) {
+      todo.completedAt = new Date().toISOString();
+    } else {
+      todo.completedAt = null;
+    }
     this.todoService.updateTodo(todo).subscribe();
   }
 
