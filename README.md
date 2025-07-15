@@ -1,5 +1,17 @@
 # .NET 9.0 ToDo API – DevOps Deployment on AKS
 
+## 🆕 Angular Frontend Added
+
+This project now includes a modern Angular frontend for the ToDo API, providing a user-friendly interface for managing tasks. The Angular app supports full CRUD, completed status, and displays completion date. It is containerized with Docker and deployed alongside the backend via Helm and Ingress.
+
+**Key features:**
+
+- Add, edit, delete
+- Responsive UI, works with the same API endpoints
+- Deployed with NGINX and integrated with Kubernetes Ingress
+
+See `frontend/` for source code and Dockerfile.
+
 A complete cloud-native .NET 9.0 ToDo API with production-ready DevOps deployment pipeline using Azure Kubernetes Service (AKS), GitHub Actions, ArgoCD (GitOps), and Azure Monitor.
 
 ## 🎯 Project Overview
