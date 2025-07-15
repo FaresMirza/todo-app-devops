@@ -1,16 +1,17 @@
-# .NET 9.0 ToDo API – DevOps Deployment on AKS
+# .NET 9.0 ToDo App – Fullstack DevOps on AKS
 
-## 🆕 Angular Frontend Added
+## 🆕 Angular Frontend Included
 
-This project now includes a modern Angular frontend for the ToDo API, providing a user-friendly interface for managing tasks. The Angular app supports full CRUD, completed status, and displays completion date. It is containerized with Docker and deployed alongside the backend via Helm and Ingress.
+This project now features a modern Angular frontend (`frontend/`) for the ToDo API, providing a user-friendly interface for managing tasks. The Angular app supports full CRUD, completed status, and displays completion date. It is containerized with Docker and deployed alongside the backend via Helm and NGINX Ingress.
 
-**Key features:**
+**Frontend Highlights:**
 
-- Add, edit, delete
-- Responsive UI, works with the same API endpoints
-- Deployed with NGINX and integrated with Kubernetes Ingress
+- Add, edit, delete, and mark todos as completed (with completion date)
+- Responsive UI, works with the same API endpoints as the backend
+- Containerized with Docker, served by NGINX
+- Deployed via Helm and exposed internally through Ingress (see `helm/todo-app/`)
 
-See `frontend/` for source code and Dockerfile.
+See [`frontend/`](./frontend/) for source code, Dockerfile, and deployment details.
 
 A complete cloud-native .NET 9.0 ToDo API with production-ready DevOps deployment pipeline using Azure Kubernetes Service (AKS), GitHub Actions, ArgoCD (GitOps), and Azure Monitor.
 
@@ -18,10 +19,10 @@ A complete cloud-native .NET 9.0 ToDo API with production-ready DevOps deploymen
 
 This project demonstrates enterprise-grade cloud-native application deployment with complete CI/CD automation, featuring:
 
-- **Application**: .NET 9.0 Web API with Entity Framework Core and PostgreSQL
+- **Application**: .NET 9.0 Web API (backend) with Entity Framework Core and PostgreSQL, plus Angular 19 frontend
 - **Infrastructure**: Azure Kubernetes Service (AKS) provisioned with Terraform
-- **CI/CD**: GitHub Actions with automated Docker build/push to Azure Container Registry
-- **GitOps**: ArgoCD for automated Kubernetes deployments
+- **CI/CD**: GitHub Actions with automated Docker build/push to Azure Container Registry (ACR)
+- **GitOps**: ArgoCD for automated Kubernetes deployments from Azure Repos
 - **Monitoring**: Azure Monitor with Container Insights and custom alerting
 - **Security**: Kubernetes secrets, RBAC, and DevOps best practices
 
@@ -55,34 +56,37 @@ curl -X POST http://todo.local/api/todos \
 ## 📁 Project Structure
 
 ```
-todo-app-devops/
-├── .github/
-│   └── workflows/
-│       └── build.yml              # GitHub Actions CI/CD pipeline
-├── app/                           # .NET 9.0 ToDo API source code
-│   ├── src/TodoApi/              # Main application code
-│   │   ├── Controllers/          # API controllers
-│   │   ├── Data/                 # Entity Framework context & migrations
-│   │   ├── Models/               # Data models
-│   │   ├── Services/             # Business logic services
-│   │   └── Program.cs            # Application entry point
-│   └── Dockerfile                # Multi-stage container build
-├── terraform/                     # Infrastructure as Code
-│   ├── modules/                  # Terraform modules (AKS, ACR)
-│   │   ├── aks/                  # AKS cluster module
-│   │   └── acr/                  # Container registry module
-│   ├── main.tf                   # Main infrastructure config
-│   ├── variables.tf              # Input variables
-│   ├── outputs.tf                # Infrastructure outputs
-│   └── terraform.tfvars          # Environment-specific values
-├── helm/                          # Kubernetes deployment charts
-│   ├── todo-api/                 # Application Helm chart
-│   │   ├── templates/            # Kubernetes manifests
-│   │   └── values.yaml           # Configuration values
-│   └── postgres/                 # PostgreSQL database chart
-│       ├── templates/            # Database manifests
-│       └── values.yaml           # Database configuration
-└── README.md                      # This documentation
+todo-app/
+├── backend/                  # .NET 9.0 ToDo API source code
+│   ├── src/TodoApi/         # Main application code
+│   │   ├── Controllers/     # API controllers
+│   │   ├── Data/            # Entity Framework context & migrations
+│   │   ├── Models/          # Data models
+│   │   ├── Services/        # Business logic services
+│   │   └── Program.cs       # Application entry point
+│   └── Dockerfile           # Multi-stage container build
+├── frontend/                 # Angular 19 ToDo frontend
+│   ├── src/                 # Angular app source code
+│   ├── Dockerfile           # Multi-stage build for NGINX
+│   └── nginx.conf           # NGINX config for API/static routing
+├── terraform/                # Infrastructure as Code
+│   ├── modules/             # Terraform modules (AKS, ACR)
+│   │   ├── aks/             # AKS cluster module
+│   │   └── acr/             # Container registry module
+│   ├── main.tf              # Main infrastructure config
+│   ├── variables.tf         # Input variables
+│   ├── outputs.tf           # Infrastructure outputs
+│   └── terraform.tfvars     # Environment-specific values
+├── helm/                     # Kubernetes deployment charts
+│   ├── todo-app/            # Helm chart for backend+frontend
+│   │   ├── templates/       # Kubernetes manifests (deployments, ingress, services)
+│   │   └── values.yaml      # Configuration values
+│   └── postgres/            # PostgreSQL database chart (bitnami or custom)
+│       ├── templates/       # Database manifests
+│       └── values.yaml      # Database configuration
+├── image/                    # Architecture diagrams
+│   └── architecture.png
+└── README.md                 # This documentation
 ```
 
 ## 🚀 Setup and Deployment Steps
@@ -128,6 +132,9 @@ kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/st
 
 # Deploy PostgreSQL
 helm install postgres ./helm/postgres
+
+# Deploy ToDo App (backend + frontend)
+helm install todo-app ./helm/todo-app
 ```
 
 ### Step 3: Configure GitOps and DNS
@@ -140,13 +147,12 @@ kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.pas
 kubectl port-forward svc/argocd-server -n argocd 8080:443
 
 # Configure local DNS
-echo "$(kubectl get ingress todo-api -o jsonpath='{.status.loadBalancer.ingress[0].ip}') todo.local" | sudo tee -a /etc/hosts
+echo "$(kubectl get ingress todo-app -o jsonpath='{.status.loadBalancer.ingress[0].ip}') todo.local" | sudo tee -a /etc/hosts
 ```
 
 ### Step 4: Test the Application
 
 ```bash
-# Test API endpoints
 curl http://todo.local/health
 curl http://todo.local/api/todos
 
@@ -164,15 +170,15 @@ The automated pipeline performs:
 
 1. **Checkout**: Retrieve source code from repository
 2. **Azure Login**: Authenticate with Azure Container Registry using secrets
-3. **Build**: Docker image build with auto-versioning (v{run_number})
-4. **Push**: Upload image to acrtodoappdev001.azurecr.io
-5. **Update**: Automatically update helm/todo-api/values.yaml with new image tag
+3. **Build**: Docker images for backend and frontend with auto-versioning (v{run_number})
+4. **Push**: Upload images to ACR
+5. **Update**: Automatically update `helm/todo-app/values.yaml` with new image tags
 6. **Commit**: Push updated chart back to repository with GitHub Actions bot
 7. **Deploy**: ArgoCD detects Git changes and deploys to AKS
 
 **Pipeline Triggers:**
 
-- Push to main branch with changes in `app/**` directory
+- Push to main branch with changes in `backend/**` or `frontend/**` directories
 - Manual workflow dispatch
 
 ### GitOps with ArgoCD
@@ -184,22 +190,30 @@ The automated pipeline performs:
 
 ## ⚙️ Helm Chart Usage
 
-### Application Chart (todo-api)
+### Application Chart (todo-app)
 
 **Note:**
-You must update the database section in `helm/todo-api/values.yaml` to match your actual database connection settings (host, name, username, etc). For example, if you use a different database name, user, or host, make sure to update them here before deploying the application.
+You must update the database section in `helm/todo-app/values.yaml` to match your actual database connection settings (host, name, username, etc). For example, if you use a different database name, user, or host, make sure to update them here before deploying the application.
 
 **Current Configuration:**
 
 ```yaml
-# helm/todo-api/values.yaml
-app:
-  name: todo-api
+# helm/todo-app/values.yaml
+backend:
   image: acrtodoappdev001.azurecr.io/todo-api:v16
   port: 8080
   replicas: 3
 
-service:
+frontend:
+  image: acrtodoappdev001.azurecr.io/todo-frontend:v16
+  port: 80
+  replicas: 1
+
+serviceBackend:
+  type: ClusterIP
+  port: 80
+
+serviceFrontend:
   type: ClusterIP
   port: 80
 
@@ -216,9 +230,11 @@ database:
 
 **Templates Available:**
 
-- `deployment.yaml`: Application deployment with 3 replicas
-- `service.yaml`: ClusterIP service on port 80
-- `ingress.yaml`: NGINX ingress for external access
+- `deploymentBackend.yaml`: Backend deployment
+- `deploymentFrontend.yaml`: Frontend deployment
+- `serviceBackend.yaml`: Backend service
+- `serviceFrontend.yaml`: Frontend service
+- `ingress.yaml`: NGINX ingress for internal access
 
 ### Database Chart (postgres)
 
@@ -271,7 +287,7 @@ kubectl exec -it postgres-0 -- psql -U todouser -d tododb
 Access ArgoCD UI at `https://localhost:8080` and create application:
 
 - **Repository**: https://github.com/FaresMirza/todo-app-devops
-- **Path**: helm/todo-api
+- **Path**: helm/todo-app
 - **Destination**: default namespace
 - **Sync Policy**: Automatic
 
@@ -487,10 +503,10 @@ kubectl exec -it postgres-0 -- psql -U todouser -d tododb -c "SELECT * FROM \"To
 
 ```bash
 # Check ingress status
-kubectl get ingress todo-api
-kubectl describe ingress todo-api
+kubectl get ingress todo-app
+kubectl describe ingress todo-app
 
-# Test external access
+# Test internal access
 curl -v http://todo.local/api/todos
 ```
 
