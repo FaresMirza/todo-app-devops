@@ -11,18 +11,12 @@ import { FormsModule } from '@angular/forms';
     <h2>ToDo List</h2>
     <form (submit)="addTodo()">
       <input [(ngModel)]="newTitle" name="title" placeholder="Title" required />
-      <input
-        [(ngModel)]="newDescription"
-        name="description"
-        placeholder="Description"
-      />
-      <input
-        [(ngModel)]="newPriority"
-        name="priority"
-        type="number"
-        min="1"
-        placeholder="Priority"
-      />
+      <input [(ngModel)]="newDescription" name="description" placeholder="Description" />
+      <input [(ngModel)]="newPriority" name="priority" type="number" min="1" placeholder="Priority" />
+      <label>
+        <input type="checkbox" [(ngModel)]="newIsComplete" name="isComplete" />
+        مكتمل
+      </label>
       <button type="submit">Add</button>
     </form>
     <ul>
@@ -32,10 +26,14 @@ import { FormsModule } from '@angular/forms';
             <input type="text" [(ngModel)]="todo.title" name="editTitle{{todo.id}}" required />
             <input type="text" [(ngModel)]="todo.description" name="editDesc{{todo.id}}" />
             <input type="number" [(ngModel)]="todo.priority" name="editPriority{{todo.id}}" min="1" />
-            <input type="checkbox" [(ngModel)]="todo.isComplete" name="editComplete{{todo.id}}" (change)="toggleComplete(todo)" />
+            <label>
+              <input type="checkbox" [(ngModel)]="todo.isComplete" name="editComplete{{todo.id}}" (change)="toggleComplete(todo)" />
+              مكتمل
+            </label>
             <button type="submit">Update</button>
             <button type="button" (click)="cancelEdit()">Cancel</button>
           </form>
+  newIsComplete: boolean = false;
         </ng-container>
         <ng-template #viewMode>
           <input
@@ -69,6 +67,7 @@ export class TodoListComponent implements OnInit {
   newTitle = '';
   newDescription = '';
   newPriority: number | null = null;
+  newIsComplete: boolean = false;
   editId: number | null = null;
 
   constructor(private todoService: TodoService) {}
@@ -82,6 +81,11 @@ export class TodoListComponent implements OnInit {
   }
 
   updateTodo(todo: TodoItem) {
+    if (todo.isComplete && !todo.completedAt) {
+      todo.completedAt = new Date().toISOString();
+    } else if (!todo.isComplete) {
+      todo.completedAt = null;
+    }
     this.todoService.updateTodo(todo).subscribe(() => {
       this.editId = null;
     });
@@ -97,16 +101,19 @@ export class TodoListComponent implements OnInit {
 
   addTodo() {
     if (!this.newTitle.trim()) return;
-    const todo = {
+    const todo: Partial<TodoItem> = {
       title: this.newTitle,
       description: this.newDescription,
       priority: this.newPriority !== null ? this.newPriority : undefined,
+      isComplete: this.newIsComplete,
+      completedAt: this.newIsComplete ? new Date().toISOString() : null
     };
     this.todoService.addTodo(todo).subscribe((newTodo) => {
       this.todos.push(newTodo);
       this.newTitle = '';
       this.newDescription = '';
       this.newPriority = null;
+      this.newIsComplete = false;
     });
   }
 
