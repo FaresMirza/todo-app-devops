@@ -11,8 +11,18 @@ import { FormsModule } from '@angular/forms';
     <h2>ToDo List</h2>
     <form (submit)="addTodo()">
       <input [(ngModel)]="newTitle" name="title" placeholder="Title" required />
-      <input [(ngModel)]="newDescription" name="description" placeholder="Description" />
-      <input [(ngModel)]="newPriority" name="priority" type="number" min="1" placeholder="Priority" />
+      <input
+        [(ngModel)]="newDescription"
+        name="description"
+        placeholder="Description"
+      />
+      <input
+        [(ngModel)]="newPriority"
+        name="priority"
+        type="number"
+        min="1"
+        placeholder="Priority"
+      />
       <label>
         <input type="checkbox" [(ngModel)]="newIsComplete" name="isComplete" />
         مكتمل
@@ -23,23 +33,41 @@ import { FormsModule } from '@angular/forms';
       <li *ngFor="let todo of todos">
         <ng-container *ngIf="editId === todo.id; else viewMode">
           <form (submit)="updateTodo(todo)">
-            <input type="text" [(ngModel)]="todo.title" name="editTitle{{todo.id}}" required />
-            <input type="text" [(ngModel)]="todo.description" name="editDesc{{todo.id}}" />
-            <input type="number" [(ngModel)]="todo.priority" name="editPriority{{todo.id}}" min="1" />
+            <input
+              type="text"
+              [(ngModel)]="todo.title"
+              name="editTitle{{ todo.id }}"
+              required
+            />
+            <input
+              type="text"
+              [(ngModel)]="todo.description"
+              name="editDesc{{ todo.id }}"
+            />
+            <input
+              type="number"
+              [(ngModel)]="todo.priority"
+              name="editPriority{{ todo.id }}"
+              min="1"
+            />
             <label>
-              <input type="checkbox" [(ngModel)]="todo.isComplete" name="editComplete{{todo.id}}" (change)="toggleComplete(todo)" />
+              <input
+                type="checkbox"
+                [(ngModel)]="todo.isComplete"
+                name="editComplete{{ todo.id }}"
+                (change)="toggleComplete(todo)"
+              />
               مكتمل
             </label>
             <button type="submit">Update</button>
             <button type="button" (click)="cancelEdit()">Cancel</button>
           </form>
-  newIsComplete: boolean = false;
         </ng-container>
         <ng-template #viewMode>
           <input
             type="checkbox"
             [(ngModel)]="todo.isComplete"
-            name="complete{{todo.id}}"
+            name="complete{{ todo.id }}"
             (change)="toggleComplete(todo)"
           />
           <span [class.completed]="todo.isComplete">
@@ -106,7 +134,7 @@ export class TodoListComponent implements OnInit {
       description: this.newDescription,
       priority: this.newPriority !== null ? this.newPriority : undefined,
       isComplete: this.newIsComplete,
-      completedAt: this.newIsComplete ? new Date().toISOString() : null
+      completedAt: this.newIsComplete ? new Date().toISOString() : null,
     };
     this.todoService.addTodo(todo).subscribe((newTodo) => {
       this.todos.push(newTodo);
