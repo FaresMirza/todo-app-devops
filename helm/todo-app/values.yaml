@@ -6,7 +6,7 @@ backend:
 
 frontend:
   name: todo-frontend
-  image: acrtodoappdev001.azurecr.io/todo-frontend:v10
+  image: acrtodoappdev001.azurecr.io/todo-frontend:v11
   port: 80
   replicas: 2
 
