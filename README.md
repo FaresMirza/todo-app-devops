@@ -13,6 +13,29 @@ This project demonstrates enterprise-grade cloud-native application deployment w
 - **Monitoring**: Azure Monitor with Container Insights and custom alerting
 - **Security**: Kubernetes secrets, RBAC, and DevOps best practices
 
+## 📚 API Endpoints
+
+The ToDo API exposes the following endpoints:
+
+| Method | Endpoint        | Description                  |
+| ------ | --------------- | ---------------------------- |
+| GET    | /api/todos      | Get all todo items           |
+| GET    | /api/todos/{id} | Get a todo item by ID        |
+| POST   | /api/todos      | Create a new todo item       |
+| PUT    | /api/todos/{id} | Update an existing todo item |
+| DELETE | /api/todos/{id} | Delete a todo item           |
+| GET    | /health         | Health check endpoint        |
+
+Example request to create a todo:
+
+```bash
+curl -X POST http://todo.local/api/todos \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Test Todo","description":"Testing deployment","priority":1}'
+```
+
+---
+
 ## 🏗️ Architecture Overview
 
 ![Architecture Diagram](./image/architecture.png)
