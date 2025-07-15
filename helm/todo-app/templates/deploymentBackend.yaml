@@ -5,7 +5,7 @@ metadata:
   labels:
     app: todo-api
 spec:
-  replicas: {{.Values.app.replicas}}
+  replicas: {{ .Values.backend.replicas }}
   selector:
     matchLabels:
       app: todo-api
@@ -16,15 +16,15 @@ spec:
     spec:
       containers:
         - name: todo-api
-          image: {{.Values.app.image}}
+          image: {{ .Values.backend.image }}
           ports:
-            - containerPort: {{.Values.app.port}}
+            - containerPort: {{ .Values.backend.port }}
               name: http
           env:
             - name: ASPNETCORE_ENVIRONMENT
               value: "Production"
             - name: ASPNETCORE_URLS
-              value: "http://+:{{.Values.app.port}}"
+              value: "http://+:{{.Values.backend.port}}"
             - name: ConnectionStrings__DefaultConnection
               value: "Host={{.Values.database.host}};Port={{.Values.database.port}};Database={{.Values.database.name}};Username={{.Values.database.username}};Password=todopassword"
             - name: POSTGRES_PASSWORD

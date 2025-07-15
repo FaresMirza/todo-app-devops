@@ -5,10 +5,10 @@ metadata:
   labels:
     app: todo-api
 spec:
-  type: {{.Values.service.type}}
+  type: {{ .Values.service.type }}
   ports:
-    - port: {{.Values.service.port}}
-      targetPort: {{.Values.app.port}}
+    - port: {{ .Values.service.port }}
+      targetPort: {{ .Values.backend.port }}
       protocol: TCP
       name: http
   selector:

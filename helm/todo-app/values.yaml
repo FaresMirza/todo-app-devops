@@ -1,8 +1,16 @@
-app:
+backend:
   name: todo-api
   image: acrtodoappdev001.azurecr.io/todo-api:v19
   port: 8080
   replicas: 3
+
+frontend:
+  name: todo-frontend
+  image: acrtodoappdev001.azurecr.io/todo-frontend:v19
+  port: 80
+  replicas: 2
+
+
 
 service:
   type: ClusterIP
@@ -17,3 +25,5 @@ database:
   port: 5432
   name: tododb
   username: todouser
+
+
