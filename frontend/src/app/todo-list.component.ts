@@ -55,21 +55,6 @@ import { FormsModule } from '@angular/forms';
         </ng-template>
       </li>
     </ul>
-  editId: number | null = null;
-
-  editTodo(id: number) {
-    this.editId = id;
-  }
-
-  cancelEdit() {
-    this.editId = null;
-  }
-
-  updateTodo(todo: TodoItem) {
-    this.todoService.updateTodo(todo).subscribe(() => {
-      this.editId = null;
-    });
-  }
   `,
   styles: [
     `
