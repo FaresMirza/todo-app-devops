@@ -79,7 +79,7 @@ Assumptions
 Success Criteria Checklist
 • AKS and ACR provisioned with Terraform
 • Helm chart for PostgreSQL deployed and running
-• Azure DevOps builds and pushes Docker image
+• Github Actions builds and pushes Docker image
 • ArgoCD syncs todo-api chart and deploys to AKS
 • Application connects to PostgreSQL using secrets
 • API is reachable internally at todo.local
@@ -111,18 +111,18 @@ Phase 3: PostgreSQL Deployment
 
 ⸻
 
-Phase 4: CI/CD Pipeline (Azure DevOps)
-•	Create a pipeline that:
-•	Builds a Docker image
-•	Pushes the image to ACR
-•	Updates helm/todo-api/values.yaml with the new image tag
-•	Commits and pushes the updated values.yaml to Azure Repos
+Phase 4: CI/CD Pipeline (Github Actions)
+• Create a pipeline that:
+• Builds a Docker image
+• Pushes the image to ACR
+• Updates helm/todo-api/values.yaml with the new image tag
+• Commits and pushes the updated values.yaml to Github
 
 ⸻
 
 Phase 5: Helm Chart Packaging for ToDo API
 • Create custom Helm chart for todo-api
-• Includes Deployment, Service, Ingress, Secret templates
+• Includes Deployment, Service, Ingress templates
 • Parameters configurable via values.yaml
 
 ⸻
