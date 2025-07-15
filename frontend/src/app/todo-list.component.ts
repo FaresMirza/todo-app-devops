@@ -11,19 +11,44 @@ import { FormsModule } from '@angular/forms';
     <h2>ToDo List</h2>
     <form (submit)="addTodo()">
       <input [(ngModel)]="newTitle" name="title" placeholder="Title" required />
-      <input [(ngModel)]="newDescription" name="description" placeholder="Description" />
-      <input [(ngModel)]="newPriority" name="priority" type="number" min="1" placeholder="Priority" />
+      <input
+        [(ngModel)]="newDescription"
+        name="description"
+        placeholder="Description"
+      />
+      <input
+        [(ngModel)]="newPriority"
+        name="priority"
+        type="number"
+        min="1"
+        placeholder="Priority"
+      />
       <button type="submit">Add</button>
     </form>
     <ul>
       <li *ngFor="let todo of todos">
-        <input type="checkbox" [(ngModel)]="todo.isComplete" (change)="toggleComplete(todo)" />
-        <span [class.completed]="todo.isComplete">{{todo.title}}</span>
+        <input
+          type="checkbox"
+          [(ngModel)]="todo.isComplete"
+          (change)="toggleComplete(todo)"
+        />
+        <span [class.completed]="todo.isComplete"
+          >{{ todo.title }}
+          <small *ngIf="todo.completedAt"
+            >(تم الإنجاز: {{ todo.completedAt | date : 'short' }})</small
+          >
+        </span>
         <button (click)="deleteTodo(todo.id)">Delete</button>
       </li>
     </ul>
   `,
-  styles: [`.completed { text-decoration: line-through; }`]
+  styles: [
+    `
+      .completed {
+        text-decoration: line-through;
+      }
+    `,
+  ],
 })
 export class TodoListComponent implements OnInit {
   todos: TodoItem[] = [];
@@ -38,7 +63,7 @@ export class TodoListComponent implements OnInit {
   }
 
   loadTodos() {
-    this.todoService.getTodos().subscribe(todos => this.todos = todos);
+    this.todoService.getTodos().subscribe((todos) => (this.todos = todos));
   }
 
   addTodo() {
@@ -46,9 +71,9 @@ export class TodoListComponent implements OnInit {
     const todo = {
       title: this.newTitle,
       description: this.newDescription,
-      priority: this.newPriority !== null ? this.newPriority : undefined
+      priority: this.newPriority !== null ? this.newPriority : undefined,
     };
-    this.todoService.addTodo(todo).subscribe(newTodo => {
+    this.todoService.addTodo(todo).subscribe((newTodo) => {
       this.todos.push(newTodo);
       this.newTitle = '';
       this.newDescription = '';
@@ -62,7 +87,7 @@ export class TodoListComponent implements OnInit {
 
   deleteTodo(id: number) {
     this.todoService.deleteTodo(id).subscribe(() => {
-      this.todos = this.todos.filter(t => t.id !== id);
+      this.todos = this.todos.filter((t) => t.id !== id);
     });
   }
 }
