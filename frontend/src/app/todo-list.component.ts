@@ -321,107 +321,114 @@ export class TodoListComponent implements OnInit, AfterViewInit {
   }
 
   renderChart(): void {
-    const priorities = this.todos.map((t) => t.priority ?? 0);
-    const labels = this.todos.map((t, i) => t.title || 'Todo ' + (i + 1));
-    const ChartRef = (window as any).Chart || Chart;
-    if (!ChartRef) return;
-    const ctx = (
-      document.getElementById('priorityChart') as HTMLCanvasElement
-    )?.getContext('2d');
-    if (!ctx) return;
-    if ((window as any).priorityChartInstance) {
-      (window as any).priorityChartInstance.destroy();
-    }
-    (window as any).priorityChartInstance = new ChartRef(ctx, {
-      type: 'bar',
-      data: {
-        labels: labels,
-        datasets: [
-          {
-            label: '',
-            data: priorities,
-            backgroundColor: [
-              '#43cea2',
-              '#2193b0',
-              '#b0c4de',
-              '#6dd5ed',
-              '#185a9d',
-              '#f7971e',
-              '#ffd200',
-              '#53302dff',
-              '#e96443',
-              '#904e95',
-            ].slice(0, labels.length),
-            borderRadius: 10,
-            borderSkipped: false,
-            hoverBackgroundColor: '#2193b0',
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            callbacks: {
-              label: function (context: any) {
-                const idx = context.dataIndex;
-                return labels[idx] + ': Priority ' + priorities[idx];
-              },
-            },
-          },
-        },
-        scales: {
-          x: {
-            grid: { display: false },
-            ticks: {
-              color: '#fff',
-              font: { weight: 'bold' },
-              callback: function (value: any, index: number) {
-                return labels[index];
-              },
-            },
-          },
-          y: {
-            beginAtZero: true,
-            grid: { color: '#fff2', borderColor: '#fff' },
-            ticks: {
-              color: '#fff',
-              font: { weight: 'bold' },
-              stepSize: 1,
-              callback: function (value: any) {
-                return Number.isInteger(value) ? value : '';
-              },
-            },
-            title: { display: false },
-          },
-        },
-      },
-      plugins: [
+  const priorities = this.todos.map((t) => t.priority ?? 0);
+  const labels = this.todos.map((t, i) => t.title || 'Todo ' + (i + 1));
+  const ChartRef = (window as any).Chart || Chart;
+  if (!ChartRef) return;
+
+  const ctx = (
+    document.getElementById('priorityChart') as HTMLCanvasElement
+  )?.getContext('2d');
+  if (!ctx) return;
+
+  if ((window as any).priorityChartInstance) {
+    (window as any).priorityChartInstance.destroy();
+  }
+
+  (window as any).priorityChartInstance = new ChartRef(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
         {
-       afterDraw: (chart: any) => {
-  const ctx = chart.ctx;
-  const dataset = chart.data.datasets[0];
-  const meta = chart.getDatasetMeta(0);
-
-  dataset.data.forEach((value: any, i: number) => {
-    const bar = meta.data[i];
-    if (!bar) return;
-
-    ctx.save();
-    ctx.font = 'bold 13px sans-serif';
-    ctx.fillStyle = '#fff'; // أبيض عشان يبان فوق العمود
-    ctx.textAlign = 'center';
-
-    // نحط النص فوق العمود بـ 10 بكسل
-    ctx.fillText(`P: ${value}`, bar.x, bar.y - 10);
-    ctx.restore();
-  });
-},
+          label: '',
+          data: priorities,
+          backgroundColor: [
+            '#43cea2',
+            '#2193b0',
+            '#b0c4de',
+            '#6dd5ed',
+            '#185a9d',
+            '#f7971e',
+            '#ffd200',
+            '#53302dff',
+            '#e96443',
+            '#904e95',
+          ].slice(0, labels.length),
+          borderRadius: 10,
+          borderSkipped: false,
+          hoverBackgroundColor: '#2193b0',
         },
       ],
-    });
-  }
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function (context: any) {
+              const idx = context.dataIndex;
+              return labels[idx] + ': Priority ' + priorities[idx];
+            },
+          },
+        },
+      },
+      scales: {
+        x: {
+          grid: { display: false },
+          ticks: {
+            color: '#fff',
+            font: { weight: 'bold', size: 12 },
+            callback: function (value: any, index: number) {
+              return labels[index];
+            },
+          },
+        },
+        y: {
+          beginAtZero: true,
+          grid: { color: '#fff2', borderColor: '#fff' },
+          ticks: {
+            color: '#fff',
+            font: { weight: 'bold' },
+            stepSize: 1,
+            callback: function (value: any) {
+              return Number.isInteger(value) ? value : '';
+            },
+          },
+          title: { display: false },
+        },
+      },
+    },
+    plugins: [
+      {
+        afterDraw: (chart: any) => {
+          const ctx = chart.ctx;
+          const dataset = chart.data.datasets[0];
+          const meta = chart.getDatasetMeta(0);
+
+          dataset.data.forEach((value: any, i: number) => {
+            const bar = meta.data[i];
+            if (!bar) return;
+
+            ctx.save();
+            ctx.font = 'bold 13px sans-serif';
+            ctx.textAlign = 'center';
+
+            const barHeight = bar.base - bar.y;
+            const inside = barHeight > 30;
+
+            ctx.fillStyle = inside ? '#fff' : '#2193b0';
+            const yPos = inside ? bar.y + 16 : bar.y - 8;
+
+            ctx.fillText(`P: ${value}`, bar.x, yPos);
+            ctx.restore();
+          });
+        },
+      },
+    ],
+  });
+}
 
   editTodo(id: number): void {
     this.editId = id;
