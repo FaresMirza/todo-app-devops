@@ -27,13 +27,13 @@ declare var Chart: any;
       <button type="submit">Add</button>
     </form>
     <div
-      style="display: flex; justify-content: center; align-items: center; margin-bottom: 32px;"
+      style="display: flex; justify-content: center; align-items: flex-start; margin-bottom: 32px;"
     >
       <div
-        style="background: linear-gradient(90deg, #6dd5ed 0%, #2193b0 100%); border-radius: 18px; box-shadow: 0 4px 24px #2193b044; padding: 24px; width: 440px;"
+        style="background: linear-gradient(90deg, #43cea2 0%, #2193b0 100%); border-radius: 18px; box-shadow: 0 4px 24px #2193b044; padding: 32px 32px 24px 32px; width: 480px;"
       >
         <h3
-          style="text-align:center; color:#fff; margin-bottom:16px; font-weight:600; letter-spacing:1px;"
+          style="text-align:center; color:#fff; margin-bottom:24px; font-weight:700; letter-spacing:1px; font-size:1.3rem;"
         >
           Priority Chart
         </h3>
@@ -111,11 +111,6 @@ declare var Chart: any;
         border: 1px solid #b0c4de;
         font-size: 1rem;
       }
-      input[type='checkbox'] {
-        accent-color: #2193b0;
-        width: 18px;
-        height: 18px;
-      }
       button {
         background: linear-gradient(90deg, #6dd5ed 0%, #2193b0 100%);
         color: #fff;
@@ -156,46 +151,25 @@ declare var Chart: any;
 })
 export class TodoListComponent implements OnInit, AfterViewInit {
   todos: TodoItem[] = [];
-  newTitle = '';
-  newDescription = '';
+  newTitle: string = '';
+  newDescription: string = '';
   newPriority: number | null = null;
   editId: number | null = null;
+  lastTodosJson: string = '';
 
   constructor(private todoService: TodoService) {}
 
-  editTodo(id: number) {
-    this.editId = id;
-  }
-
-  cancelEdit() {
-    this.editId = null;
-  }
-
-  updateTodo(todo: TodoItem) {
-    if (todo.isComplete && !todo.completedAt) {
-      todo.completedAt = new Date().toISOString();
-    } else if (!todo.isComplete) {
-      todo.completedAt = null;
-    }
-    this.todoService.updateTodo(todo).subscribe(() => {
-      this.editId = null;
-    });
-  }
-
-  ngOnInit() {
+  ngOnInit(): void {
     this.loadTodos();
   }
 
-  lastTodosJson = '';
-
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.loadChartJs().then(() => {
       this.renderChart();
     });
   }
 
-  ngDoCheck() {
-    // Only re-render chart if todos actually changed
+  ngDoCheck(): void {
     const currentJson = JSON.stringify(
       this.todos.map((t) => ({
         id: t.id,
@@ -224,8 +198,11 @@ export class TodoListComponent implements OnInit, AfterViewInit {
     });
   }
 
-  renderChart() {
-    if (typeof Chart === 'undefined') return;
+  renderChart(): void {
+    const priorities = this.todos.map((t) => t.priority ?? 0);
+    const labels = this.todos.map((t, i) => t.title || `Todo ${i + 1}`);
+    const ChartRef = (window as any).Chart || Chart;
+    if (!ChartRef) return;
     const ctx = (
       document.getElementById('priorityChart') as HTMLCanvasElement
     )?.getContext('2d');
@@ -233,34 +210,29 @@ export class TodoListComponent implements OnInit, AfterViewInit {
     if ((window as any).priorityChartInstance) {
       (window as any).priorityChartInstance.destroy();
     }
-    // Invert priorities: lower number = higher bar
-    const priorities = this.todos.map((t) => t.priority ?? 10);
-    const maxPriority = priorities.length ? Math.max(...priorities) : 10;
-    const inverted = priorities.map((p) => maxPriority + 1 - p);
-    const labels = this.todos.map((t, i) => t.title || `Todo ${i + 1}`);
-    (window as any).priorityChartInstance = new Chart(ctx, {
+    (window as any).priorityChartInstance = new ChartRef(ctx, {
       type: 'bar',
       data: {
-        labels,
+        labels: labels,
         datasets: [
           {
             label: '',
-            data: inverted,
+            data: priorities,
             backgroundColor: [
-              '#2193b0',
-              '#6dd5ed',
-              '#b0c4de',
               '#43cea2',
+              '#2193b0',
+              '#b0c4de',
+              '#6dd5ed',
               '#185a9d',
               '#f7971e',
               '#ffd200',
-              '#f44336',
+              '#53302dff',
               '#e96443',
               '#904e95',
             ].slice(0, labels.length),
-            borderRadius: 8,
+            borderRadius: 10,
             borderSkipped: false,
-            hoverBackgroundColor: '#43cea2',
+            hoverBackgroundColor: '#2193b0',
           },
         ],
       },
@@ -271,7 +243,6 @@ export class TodoListComponent implements OnInit, AfterViewInit {
           tooltip: {
             callbacks: {
               label: function (context: any) {
-                // Show original priority value
                 const idx = context.dataIndex;
                 return `${labels[idx]}: Priority ${priorities[idx]}`;
               },
@@ -285,7 +256,6 @@ export class TodoListComponent implements OnInit, AfterViewInit {
               color: '#fff',
               font: { weight: 'bold' },
               callback: function (value: any, index: number) {
-                // Show task name below each bar
                 return labels[index];
               },
             },
@@ -293,30 +263,33 @@ export class TodoListComponent implements OnInit, AfterViewInit {
           y: {
             beginAtZero: true,
             grid: { color: '#fff2', borderColor: '#fff' },
-            ticks: { color: '#fff', font: { weight: 'bold' } },
-            title: {
-              display: false,
+            ticks: {
+              color: '#fff',
+              font: { weight: 'bold' },
+              stepSize: 1,
+              callback: function (value: any) {
+                return Number.isInteger(value) ? value : '';
+              },
             },
-            // Remove max limit, let bars scale naturally
+            title: { display: false },
           },
         },
       },
       plugins: [
         {
           afterDraw: (chart: any) => {
-            // Draw priority value below each bar
             const ctx = chart.ctx;
             chart.data.datasets[0].data.forEach((value: any, i: number) => {
               const meta = chart.getDatasetMeta(0).data[i];
               if (meta) {
                 ctx.save();
-                ctx.font = 'bold 14px sans-serif';
+                ctx.font = 'bold 15px sans-serif';
                 ctx.fillStyle = '#2193b0';
                 ctx.textAlign = 'center';
                 ctx.fillText(
                   `P: ${priorities[i]}`,
                   meta.x,
-                  chart.chartArea.bottom + 18
+                  chart.chartArea.bottom + 22
                 );
                 ctx.restore();
               }
@@ -327,14 +300,36 @@ export class TodoListComponent implements OnInit, AfterViewInit {
     });
   }
 
-  loadTodos() {
+  editTodo(id: number): void {
+    this.editId = id;
+  }
+
+  cancelEdit(): void {
+    this.editId = null;
+  }
+
+  updateTodo(todo: TodoItem): void {
+    this.todoService.updateTodo(todo).subscribe(() => {
+      this.editId = null;
+      this.loadTodos();
+    });
+  }
+
+  deleteTodo(id: number): void {
+    this.todoService.deleteTodo(id).subscribe(() => {
+      this.todos = this.todos.filter((t) => t.id !== id);
+      this.renderChart();
+    });
+  }
+
+  loadTodos(): void {
     this.todoService.getTodos().subscribe((todos) => {
       this.todos = todos;
       this.renderChart();
     });
   }
 
-  addTodo() {
+  addTodo(): void {
     if (!this.newTitle.trim()) return;
     const todo: Partial<TodoItem> = {
       title: this.newTitle,
@@ -346,22 +341,6 @@ export class TodoListComponent implements OnInit, AfterViewInit {
       this.newTitle = '';
       this.newDescription = '';
       this.newPriority = null;
-      this.renderChart();
-    });
-  }
-
-  toggleComplete(todo: TodoItem) {
-    if (todo.isComplete) {
-      todo.completedAt = new Date().toISOString();
-    } else {
-      todo.completedAt = null;
-    }
-    this.todoService.updateTodo(todo).subscribe();
-  }
-
-  deleteTodo(id: number) {
-    this.todoService.deleteTodo(id).subscribe(() => {
-      this.todos = this.todos.filter((t) => t.id !== id);
       this.renderChart();
     });
   }
