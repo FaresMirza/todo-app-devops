@@ -68,7 +68,6 @@ todo-app/
 ├── frontend/                 # Angular 19 ToDo frontend
 │   ├── src/                 # Angular app source code
 │   ├── Dockerfile           # Multi-stage build for NGINX
-│   └── nginx.conf           # NGINX config for API/static routing
 ├── terraform/                # Infrastructure as Code
 │   ├── modules/             # Terraform modules (AKS, ACR)
 │   │   ├── aks/             # AKS cluster module
