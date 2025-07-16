@@ -399,22 +399,23 @@ export class TodoListComponent implements OnInit, AfterViewInit {
       },
       plugins: [
         {
-          afterDraw: (chart: any) => {
+       afterDraw: (chart: any) => {
   const ctx = chart.ctx;
-  chart.data.datasets[0].data.forEach((value: any, i: number) => {
-    const meta = chart.getDatasetMeta(0).data[i];
-    if (meta) {
-      ctx.save();
-      ctx.font = 'bold 14px sans-serif';
-      ctx.fillStyle = '#fff';
-      ctx.textAlign = 'center';
-      ctx.fillText(
-        'P: ' + priorities[i],
-        meta.x,
-        meta.y - 10 // ← هنا التغيير
-      );
-      ctx.restore();
-    }
+  const dataset = chart.data.datasets[0];
+  const meta = chart.getDatasetMeta(0);
+
+  dataset.data.forEach((value: any, i: number) => {
+    const bar = meta.data[i];
+    if (!bar) return;
+
+    ctx.save();
+    ctx.font = 'bold 13px sans-serif';
+    ctx.fillStyle = '#fff'; // أبيض عشان يبان فوق العمود
+    ctx.textAlign = 'center';
+
+    // نحط النص فوق العمود بـ 10 بكسل
+    ctx.fillText(`P: ${value}`, bar.x, bar.y - 10);
+    ctx.restore();
   });
 },
         },
