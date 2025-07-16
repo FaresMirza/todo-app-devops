@@ -8,10 +8,10 @@ RUN npm install
 COPY . .
 RUN npm run build -- --output-path=dist/frontend --base-href=/
 
-# Stage 2: Serve via NGINX
-FROM nginx:alpine
-COPY --from=build /app/dist/frontend/browser /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/nginx.conf
-
+# Stage 2: Serve via http-server (no NGINX)
+FROM node:20-alpine as serve
+WORKDIR /app
+COPY --from=build /app/dist/frontend/browser ./
+RUN npm install -g http-server
 EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+CMD [ "http-server", "-p", "80", "." ]
