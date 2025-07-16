@@ -22,7 +22,7 @@ declare var Chart: any;
         name="priority"
         type="number"
         min="1"
-        placeholder="Priority (lower is higher)"
+        placeholder="Priority"
       />
       <button type="submit">Add</button>
     </form>
@@ -186,14 +186,27 @@ export class TodoListComponent implements OnInit, AfterViewInit {
     this.loadTodos();
   }
 
+  lastTodosJson = '';
+
   ngAfterViewInit() {
     this.loadChartJs().then(() => {
-      setTimeout(() => this.renderChart(), 100);
+      this.renderChart();
     });
   }
 
   ngDoCheck() {
-    setTimeout(() => this.renderChart(), 100);
+    // Only re-render chart if todos actually changed
+    const currentJson = JSON.stringify(
+      this.todos.map((t) => ({
+        id: t.id,
+        priority: t.priority,
+        title: t.title,
+      }))
+    );
+    if (currentJson !== this.lastTodosJson) {
+      this.lastTodosJson = currentJson;
+      this.renderChart();
+    }
   }
 
   loadChartJs(): Promise<void> {
@@ -231,7 +244,7 @@ export class TodoListComponent implements OnInit, AfterViewInit {
         labels,
         datasets: [
           {
-            label: 'Priority (lower is higher)',
+            label: '',
             data: inverted,
             backgroundColor: [
               '#2193b0',
@@ -260,7 +273,7 @@ export class TodoListComponent implements OnInit, AfterViewInit {
               label: function (context: any) {
                 // Show original priority value
                 const idx = context.dataIndex;
-                return `Priority: ${priorities[idx]}`;
+                return `${labels[idx]}: Priority ${priorities[idx]}`;
               },
             },
           },
@@ -268,21 +281,49 @@ export class TodoListComponent implements OnInit, AfterViewInit {
         scales: {
           x: {
             grid: { display: false },
-            ticks: { color: '#fff', font: { weight: 'bold' } },
+            ticks: {
+              color: '#fff',
+              font: { weight: 'bold' },
+              callback: function (value: any, index: number) {
+                // Show task name below each bar
+                return labels[index];
+              },
+            },
           },
           y: {
             beginAtZero: true,
             grid: { color: '#fff2', borderColor: '#fff' },
             ticks: { color: '#fff', font: { weight: 'bold' } },
             title: {
-              display: true,
-              text: 'Higher bar = higher priority',
-              color: '#fff',
-              font: { weight: 'bold', size: 14 },
+              display: false,
             },
+            // Remove max limit, let bars scale naturally
           },
         },
       },
+      plugins: [
+        {
+          afterDraw: (chart: any) => {
+            // Draw priority value below each bar
+            const ctx = chart.ctx;
+            chart.data.datasets[0].data.forEach((value: any, i: number) => {
+              const meta = chart.getDatasetMeta(0).data[i];
+              if (meta) {
+                ctx.save();
+                ctx.font = 'bold 14px sans-serif';
+                ctx.fillStyle = '#2193b0';
+                ctx.textAlign = 'center';
+                ctx.fillText(
+                  `P: ${priorities[i]}`,
+                  meta.x,
+                  chart.chartArea.bottom + 18
+                );
+                ctx.restore();
+              }
+            });
+          },
+        },
+      ],
     });
   }
 
