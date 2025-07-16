@@ -174,11 +174,21 @@ export class TodoListComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.renderChart();
+    this.loadChartJs().then(() => this.renderChart());
   }
 
   ngDoCheck() {
     this.renderChart();
+  }
+
+  loadChartJs(): Promise<void> {
+    return new Promise((resolve) => {
+      if (typeof Chart !== 'undefined') return resolve();
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+      script.onload = () => resolve();
+      document.body.appendChild(script);
+    });
   }
 
   renderChart() {
@@ -217,7 +227,10 @@ export class TodoListComponent implements OnInit, AfterViewInit {
   }
 
   loadTodos() {
-    this.todoService.getTodos().subscribe((todos) => (this.todos = todos));
+    this.todoService.getTodos().subscribe((todos) => {
+      this.todos = todos;
+      this.renderChart();
+    });
   }
 
   addTodo() {
@@ -226,14 +239,13 @@ export class TodoListComponent implements OnInit, AfterViewInit {
       title: this.newTitle,
       description: this.newDescription,
       priority: this.newPriority !== null ? this.newPriority : undefined,
-      // removed completed logic
     };
     this.todoService.addTodo(todo).subscribe((newTodo) => {
       this.todos.push(newTodo);
       this.newTitle = '';
       this.newDescription = '';
       this.newPriority = null;
-      // removed completed logic
+      this.renderChart();
     });
   }
 
@@ -249,6 +261,7 @@ export class TodoListComponent implements OnInit, AfterViewInit {
   deleteTodo(id: number) {
     this.todoService.deleteTodo(id).subscribe(() => {
       this.todos = this.todos.filter((t) => t.id !== id);
+      this.renderChart();
     });
   }
 }
