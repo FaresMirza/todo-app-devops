@@ -1,1 +1,41 @@
-/* You can add global styles to this file, and also import other style files */
+/* Modern beautiful gradient background and clean global styles */
+body {
+  min-height: 100vh;
+  margin: 0;
+  font-family: "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif;
+  background: linear-gradient(135deg, #6dd5ed 0%, #2193b0 100%);
+  color: #222;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+app-root {
+  width: 100%;
+  max-width: 600px;
+  margin: 40px auto;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(33, 147, 176, 0.15);
+  padding: 32px 24px;
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+  border-radius: 6px;
+  border: 1px solid #b0c4de;
+  padding: 8px 12px;
+  margin: 4px 0;
+  outline: none;
+  transition: border-color 0.2s;
+}
+button:hover,
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: #2193b0;
+}
