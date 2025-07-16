@@ -84,8 +84,78 @@ import { FormsModule } from '@angular/forms';
   `,
   styles: [
     `
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 32px 0 0 0;
+      }
+      li {
+        background: #fff;
+        margin-bottom: 18px;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px #2193b026;
+        padding: 18px 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transition: box-shadow 0.2s;
+      }
+      li:hover {
+        box-shadow: 0 4px 24px #2193b044;
+      }
+      form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+      }
+      input[type='text'],
+      input[type='number'] {
+        flex: 1 1 120px;
+        padding: 8px;
+        border-radius: 6px;
+        border: 1px solid #b0c4de;
+        font-size: 1rem;
+      }
+      input[type='checkbox'] {
+        accent-color: #2193b0;
+        width: 18px;
+        height: 18px;
+      }
+      button {
+        background: linear-gradient(90deg, #6dd5ed 0%, #2193b0 100%);
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 18px;
+        font-size: 1rem;
+        cursor: pointer;
+        box-shadow: 0 2px 8px #2193b026;
+        transition: background 0.2s, box-shadow 0.2s;
+      }
+      button:hover {
+        background: linear-gradient(90deg, #2193b0 0%, #6dd5ed 100%);
+        box-shadow: 0 4px 16px #2193b044;
+      }
       .completed {
         text-decoration: line-through;
+        color: #888;
+      }
+      h2 {
+        color: #2193b0;
+        font-weight: 700;
+        margin-top: 0;
+        margin-bottom: 24px;
+        letter-spacing: 1px;
+      }
+      label {
+        font-size: 1rem;
+        color: #2193b0;
+        margin-right: 8px;
+      }
+      small {
+        color: #888;
+        margin-left: 8px;
       }
     `,
   ],
