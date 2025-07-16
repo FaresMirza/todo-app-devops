@@ -11,7 +11,7 @@ declare var Chart: any;
   template: `
     <div class="todo-bg">
       <div class="todo-container">
-        <h1 class="todo-title-main">🚀 My Next-Level ToDo</h1>
+        <h1 class="todo-title-main">ToDo</h1>
         <form (submit)="addTodo()" class="todo-form">
           <input
             [(ngModel)]="newTitle"
