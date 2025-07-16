@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { TodoService, TodoItem } from './todo.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+declare var Chart: any;
 
 @Component({
   selector: 'app-todo-list',
@@ -23,12 +24,9 @@ import { FormsModule } from '@angular/forms';
         min="1"
         placeholder="Priority"
       />
-      <label>
-        <input type="checkbox" [(ngModel)]="newIsComplete" name="isComplete" />
-        مكتمل
-      </label>
       <button type="submit">Add</button>
     </form>
+    <canvas id="priorityChart" width="400" height="200"></canvas>
     <ul>
       <li *ngFor="let todo of todos">
         <ng-container *ngIf="editId === todo.id; else viewMode">
@@ -50,31 +48,14 @@ import { FormsModule } from '@angular/forms';
               name="editPriority{{ todo.id }}"
               min="1"
             />
-            <label>
-              <input
-                type="checkbox"
-                [(ngModel)]="todo.isComplete"
-                name="editComplete{{ todo.id }}"
-                (change)="toggleComplete(todo)"
-              />
-              مكتمل
-            </label>
             <button type="submit">Update</button>
             <button type="button" (click)="cancelEdit()">Cancel</button>
           </form>
         </ng-container>
         <ng-template #viewMode>
-          <input
-            type="checkbox"
-            [(ngModel)]="todo.isComplete"
-            name="complete{{ todo.id }}"
-            (change)="toggleComplete(todo)"
-          />
-          <span [class.completed]="todo.isComplete">
+          <span>
             {{ todo.title }}
-            <small *ngIf="todo.completedAt">
-              (تم الإنجاز: {{ todo.completedAt | date : 'short' }})
-            </small>
+            <small *ngIf="todo.priority">(Priority: {{ todo.priority }})</small>
           </span>
           <button (click)="editTodo(todo.id)">Edit</button>
           <button (click)="deleteTodo(todo.id)">Delete</button>
@@ -160,12 +141,11 @@ import { FormsModule } from '@angular/forms';
     `,
   ],
 })
-export class TodoListComponent implements OnInit {
+export class TodoListComponent implements OnInit, AfterViewInit {
   todos: TodoItem[] = [];
   newTitle = '';
   newDescription = '';
   newPriority: number | null = null;
-  newIsComplete: boolean = false;
   editId: number | null = null;
 
   constructor(private todoService: TodoService) {}
@@ -193,6 +173,49 @@ export class TodoListComponent implements OnInit {
     this.loadTodos();
   }
 
+  ngAfterViewInit() {
+    this.renderChart();
+  }
+
+  ngDoCheck() {
+    this.renderChart();
+  }
+
+  renderChart() {
+    if (typeof Chart === 'undefined') return;
+    const ctx = (
+      document.getElementById('priorityChart') as HTMLCanvasElement
+    )?.getContext('2d');
+    if (!ctx) return;
+    if ((window as any).priorityChartInstance) {
+      (window as any).priorityChartInstance.destroy();
+    }
+    const priorities = this.todos.map((t) => t.priority || 0);
+    const labels = this.todos.map((t, i) => t.title || `Todo ${i + 1}`);
+    (window as any).priorityChartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Priority',
+            data: priorities,
+            backgroundColor: '#2193b0',
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+        },
+        scales: {
+          y: { beginAtZero: true },
+        },
+      },
+    });
+  }
+
   loadTodos() {
     this.todoService.getTodos().subscribe((todos) => (this.todos = todos));
   }
@@ -203,15 +226,14 @@ export class TodoListComponent implements OnInit {
       title: this.newTitle,
       description: this.newDescription,
       priority: this.newPriority !== null ? this.newPriority : undefined,
-      isComplete: this.newIsComplete,
-      completedAt: this.newIsComplete ? new Date().toISOString() : null,
+      // removed completed logic
     };
     this.todoService.addTodo(todo).subscribe((newTodo) => {
       this.todos.push(newTodo);
       this.newTitle = '';
       this.newDescription = '';
       this.newPriority = null;
-      this.newIsComplete = false;
+      // removed completed logic
     });
   }
 
