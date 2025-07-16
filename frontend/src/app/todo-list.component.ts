@@ -107,202 +107,167 @@ declare var Chart: any;
   styles: [
     `
       :host {
-    font-family: 'Segoe UI', Roboto, sans-serif;
-    color: #333;
-  }
+  font-family: "Inter", "Segoe UI", sans-serif;
+  color: #222;
+  background-color: #f5f7fa;
+}
 
-  .todo-bg {
-    min-height: 100vh;
-    background: radial-gradient(circle at 60% 40%, #43cea2 0%, #2193b0 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 16px;
-  }
+.todo-container {
+  background: #fff;
+  border-radius: 24px;
+  padding: 32px;
+  max-width: 720px;
+  width: 100%;
+  margin: auto;
+  box-shadow: 0 12px 40px #00000015;
+}
 
-  .todo-container {
-    background: #fff;
-    border-radius: 24px;
-    box-shadow: 0 8px 40px #2193b044;
-    padding: 32px;
-    width: 100%;
-    max-width: 720px;
-  }
+.todo-title-main {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 24px;
+  color: #2193b0;
+}
 
-  .todo-title-main {
-    text-align: center;
-    font-size: 2rem;
-    font-weight: 800;
-    color: #2193b0;
-    margin-bottom: 24px;
-  }
+.todo-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+}
 
+.todo-form input {
+  flex: 1 1 140px;
+  padding: 10px 14px;
+  font-size: 1rem;
+  border-radius: 10px;
+  border: 1.5px solid #43cea2;
+  background-color: #f7fafd;
+}
+
+.add-btn {
+  background: linear-gradient(to right, #43cea2, #2193b0);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.add-btn:hover {
+  box-shadow: 0 4px 16px #2193b044;
+}
+
+.chart-section {
+  margin: 24px 0;
+  display: flex;
+  justify-content: center;
+}
+
+.chart-card {
+  width: 100%;
+  max-width: 520px;
+  background: linear-gradient(135deg, #2193b0, #43cea2);
+  padding: 24px;
+  border-radius: 20px;
+  color: white;
+  box-shadow: 0 8px 24px #2193b033;
+}
+
+.chart-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.todo-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.todo-item {
+  background: linear-gradient(to right, #43cea2, #2193b0);
+  padding: 20px;
+  border-radius: 16px;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  box-shadow: 0 6px 20px #2193b044;
+}
+
+.item-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.item-title {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.item-desc {
+  font-size: 0.95rem;
+  opacity: 0.85;
+}
+
+.priority-chip {
+  background: #ffd200;
+  color: #185a9d;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-right: 12px;
+}
+
+.item-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.edit-btn,
+.delete-btn {
+  background-color: #ffffff22;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.edit-btn:hover,
+.delete-btn:hover {
+  background-color: #ffffff44;
+}
+
+@media (max-width: 600px) {
   .todo-form {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-bottom: 32px;
-  }
-
-  .input-title,
-  .input-desc,
-  .input-priority {
-    flex: 1 1 150px;
-    padding: 12px;
-    border-radius: 10px;
-    border: 1.8px solid #43cea2;
-    font-size: 1rem;
-    background: #f7fafd;
-  }
-
-  .add-btn {
-    background: linear-gradient(90deg, #43cea2, #2193b0);
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 10px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: 0.3s ease;
-  }
-
-  .add-btn:hover {
-    opacity: 0.9;
-    box-shadow: 0 4px 16px #2193b066;
-  }
-
-  .chart-section {
-    margin: 24px 0;
-    display: flex;
-    justify-content: center;
-  }
-
-  .chart-card {
-    width: 100%;
-    max-width: 480px;
-    background: linear-gradient(90deg, #2193b0, #43cea2);
-    border-radius: 20px;
-    padding: 24px;
-    color: white;
-    box-shadow: 0 4px 24px #2193b044;
-  }
-
-  .chart-title {
-    font-size: 1.25rem;
-    font-weight: 800;
-    text-align: center;
-    margin-bottom: 16px;
-  }
-
-  .todo-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+    flex-direction: column;
   }
 
   .todo-item {
-    background: linear-gradient(90deg, #43cea2, #2193b0);
-    margin-bottom: 20px;
-    border-radius: 14px;
-    padding: 20px;
-    color: white;
-    display: flex;
     flex-direction: column;
-    gap: 10px;
-  }
-
-  .item-content {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-
-  .item-title {
-    font-weight: bold;
-    font-size: 1.1rem;
-  }
-
-  .item-desc {
-    font-size: 0.95rem;
-    opacity: 0.9;
+    align-items: flex-start;
+    gap: 12px;
   }
 
   .item-meta {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+    align-self: flex-end;
   }
 
-  .priority-chip {
-    background: #ffd200;
-    color: #185a9d;
-    padding: 6px 12px;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    font-weight: 700;
-  }
-
-  .edit-btn,
-  .delete-btn,
-  .save-btn,
-  .cancel-btn {
-    background: #ffffff22;
-    border: none;
-    padding: 8px 14px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: 0.2s;
-  }
-
-  .edit-btn:hover,
-  .delete-btn:hover,
-  .save-btn:hover,
-  .cancel-btn:hover {
-    background: #ffffff33;
-  }
-
-  .edit-block {
-    background: #ffffff;
-    color: #333;
+  .chart-card {
     padding: 16px;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px #00000022;
   }
-
-  .edit-form {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-
-  .edit-form input {
-    flex: 1 1 140px;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 1rem;
-  }
-
-  @media (max-width: 600px) {
-    .todo-form,
-    .edit-form {
-      flex-direction: column;
-    }
-
-    .input-title,
-    .input-desc,
-    .input-priority,
-    .add-btn {
-      width: 100%;
-    }
-
-    .item-content {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-  }
+}
     `,
   ],
 })
