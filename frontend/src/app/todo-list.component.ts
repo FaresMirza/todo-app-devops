@@ -400,23 +400,23 @@ export class TodoListComponent implements OnInit, AfterViewInit {
       plugins: [
         {
           afterDraw: (chart: any) => {
-            const ctx = chart.ctx;
-            chart.data.datasets[0].data.forEach((value: any, i: number) => {
-              const meta = chart.getDatasetMeta(0).data[i];
-              if (meta) {
-                ctx.save();
-                ctx.font = 'bold 15px sans-serif';
-                ctx.fillStyle = '#2193b0';
-                ctx.textAlign = 'center';
-                ctx.fillText(
-                  'P: ' + priorities[i],
-                  meta.x,
-                  chart.chartArea.bottom + 22
-                );
-                ctx.restore();
-              }
-            });
-          },
+  const ctx = chart.ctx;
+  chart.data.datasets[0].data.forEach((value: any, i: number) => {
+    const meta = chart.getDatasetMeta(0).data[i];
+    if (meta) {
+      ctx.save();
+      ctx.font = 'bold 14px sans-serif';
+      ctx.fillStyle = '#fff';
+      ctx.textAlign = 'center';
+      ctx.fillText(
+        'P: ' + priorities[i],
+        meta.x,
+        meta.y - 10 // ← هنا التغيير
+      );
+      ctx.restore();
+    }
+  });
+},
         },
       ],
     });
