@@ -10,7 +10,7 @@ declare var Chart: any;
   imports: [CommonModule, FormsModule],
   template: `
     <h2>ToDo List</h2>
-    <form (submit)="addTodo()">
+    <form (submit)="addTodo()" style="margin-bottom: 32px;">
       <input [(ngModel)]="newTitle" name="title" placeholder="Title" required />
       <input
         [(ngModel)]="newDescription"
@@ -22,15 +22,24 @@ declare var Chart: any;
         name="priority"
         type="number"
         min="1"
-        placeholder="Priority"
+        placeholder="Priority (lower is higher)"
       />
       <button type="submit">Add</button>
-      <div style="margin-bottom:32px;">
-        <canvas id="priorityChart" width="400" height="200"></canvas>
-      </div>
-      <button type="submit">Add</button>
     </form>
-    <canvas id="priorityChart" width="400" height="200"></canvas>
+    <div
+      style="display: flex; justify-content: center; align-items: center; margin-bottom: 32px;"
+    >
+      <div
+        style="background: linear-gradient(90deg, #6dd5ed 0%, #2193b0 100%); border-radius: 18px; box-shadow: 0 4px 24px #2193b044; padding: 24px; width: 440px;"
+      >
+        <h3
+          style="text-align:center; color:#fff; margin-bottom:16px; font-weight:600; letter-spacing:1px;"
+        >
+          Priority Chart
+        </h3>
+        <canvas id="priorityChart" width="400" height="220"></canvas>
+      </div>
+    </div>
     <ul>
       <li *ngFor="let todo of todos">
         <ng-container *ngIf="editId === todo.id; else viewMode">
@@ -211,7 +220,10 @@ export class TodoListComponent implements OnInit, AfterViewInit {
     if ((window as any).priorityChartInstance) {
       (window as any).priorityChartInstance.destroy();
     }
-    const priorities = this.todos.map((t) => t.priority || 0);
+    // Invert priorities: lower number = higher bar
+    const priorities = this.todos.map((t) => t.priority ?? 10);
+    const maxPriority = priorities.length ? Math.max(...priorities) : 10;
+    const inverted = priorities.map((p) => maxPriority + 1 - p);
     const labels = this.todos.map((t, i) => t.title || `Todo ${i + 1}`);
     (window as any).priorityChartInstance = new Chart(ctx, {
       type: 'bar',
@@ -219,9 +231,23 @@ export class TodoListComponent implements OnInit, AfterViewInit {
         labels,
         datasets: [
           {
-            label: 'Priority',
-            data: priorities,
-            backgroundColor: '#2193b0',
+            label: 'Priority (lower is higher)',
+            data: inverted,
+            backgroundColor: [
+              '#2193b0',
+              '#6dd5ed',
+              '#b0c4de',
+              '#43cea2',
+              '#185a9d',
+              '#f7971e',
+              '#ffd200',
+              '#f44336',
+              '#e96443',
+              '#904e95',
+            ].slice(0, labels.length),
+            borderRadius: 8,
+            borderSkipped: false,
+            hoverBackgroundColor: '#43cea2',
           },
         ],
       },
@@ -229,9 +255,32 @@ export class TodoListComponent implements OnInit, AfterViewInit {
         responsive: true,
         plugins: {
           legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function (context: any) {
+                // Show original priority value
+                const idx = context.dataIndex;
+                return `Priority: ${priorities[idx]}`;
+              },
+            },
+          },
         },
         scales: {
-          y: { beginAtZero: true },
+          x: {
+            grid: { display: false },
+            ticks: { color: '#fff', font: { weight: 'bold' } },
+          },
+          y: {
+            beginAtZero: true,
+            grid: { color: '#fff2', borderColor: '#fff' },
+            ticks: { color: '#fff', font: { weight: 'bold' } },
+            title: {
+              display: true,
+              text: 'Higher bar = higher priority',
+              color: '#fff',
+              font: { weight: 'bold', size: 14 },
+            },
+          },
         },
       },
     });
