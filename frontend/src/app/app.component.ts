@@ -7,10 +7,7 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-root',
   standalone: true,
   imports: [TodoListComponent, CommonModule, FormsModule],
-  template: `
-    <h1>Welcome to {{ title }}!</h1>
-    <app-todo-list></app-todo-list>
-  `,
+  template: ` <app-todo-list></app-todo-list> `,
   styles: [],
 })
 export class AppComponent {

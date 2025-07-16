@@ -25,6 +25,10 @@ declare var Chart: any;
         placeholder="Priority"
       />
       <button type="submit">Add</button>
+      <div style="margin-bottom:32px;">
+        <canvas id="priorityChart" width="400" height="200"></canvas>
+      </div>
+      <button type="submit">Add</button>
     </form>
     <canvas id="priorityChart" width="400" height="200"></canvas>
     <ul>
@@ -174,16 +178,23 @@ export class TodoListComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.loadChartJs().then(() => this.renderChart());
+    this.loadChartJs().then(() => {
+      setTimeout(() => this.renderChart(), 100);
+    });
   }
 
   ngDoCheck() {
-    this.renderChart();
+    setTimeout(() => this.renderChart(), 100);
   }
 
   loadChartJs(): Promise<void> {
     return new Promise((resolve) => {
       if (typeof Chart !== 'undefined') return resolve();
+      const existing = document.querySelector('script[src*="chart.js"]');
+      if (existing) {
+        existing.addEventListener('load', () => resolve());
+        return;
+      }
       const script = document.createElement('script');
       script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
       script.onload = () => resolve();
