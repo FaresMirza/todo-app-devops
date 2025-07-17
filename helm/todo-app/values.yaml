@@ -1,6 +1,6 @@
 backend:
   name: todo-api
-  image: acrtodoappdev001.azurecr.io/todo-api:v2
+  image: acrtodoappdev001.azurecr.io/todo-api:v3
   port: 8080
   replicas: 3
 
