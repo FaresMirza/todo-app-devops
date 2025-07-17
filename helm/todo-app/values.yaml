@@ -25,5 +25,6 @@ database:
   port: 5432
   name: tododb
   username: todouser
+  password: todopassword
 
 
