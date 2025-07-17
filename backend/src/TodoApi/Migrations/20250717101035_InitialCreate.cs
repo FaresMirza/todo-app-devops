@@ -31,11 +31,6 @@ namespace TodoApi.Migrations
                     table.PrimaryKey("PK_TodoItems", x => x.Id);
                 });
 
-            migrationBuilder.InsertData(
-                table: "TodoItems",
-                columns: new[] { "Id", "CompletedAt", "CreatedAt", "Description", "IsCompleted", "Priority", "Title", "UpdatedAt" },
-                values: new object[] { 1, null, new DateTime(2025, 7, 14, 11, 22, 36, 323, DateTimeKind.Utc).AddTicks(5150), "This is a sample todo item", false, 2, "Sample Todo Item", null });
-
             migrationBuilder.CreateIndex(
                 name: "IX_TodoItems_CreatedAt",
                 table: "TodoItems",
