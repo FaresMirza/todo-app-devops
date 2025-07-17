@@ -16,8 +16,16 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? throw new InvalidOperationException("❌ Missing connection string: DefaultConnection");
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+if (string.IsNullOrWhiteSpace(connectionString))
+{
+    // Fallback to environment variable for containerized deployments
+    connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
+}
+if (string.IsNullOrWhiteSpace(connectionString))
+{
+    throw new InvalidOperationException("❌ Missing connection string: DefaultConnection (appsettings or env)");
+}
 
 builder.Services.AddDbContext<TodoContext>(options =>
     options.UseNpgsql(connectionString));
