@@ -15,9 +15,6 @@ RUN dotnet restore "TodoApi/TodoApi.csproj"
 COPY src/ .
 WORKDIR "/src/TodoApi"
 
-# Build the application
-RUN dotnet build "TodoApi.csproj" -c Release -o /app/build
-
 # Publish the application
 FROM build AS publish
 RUN dotnet publish "TodoApi.csproj" -c Release -o /app/publish /p:UseAppHost=false
