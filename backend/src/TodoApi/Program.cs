@@ -80,19 +80,37 @@ using (var scope = app.Services.CreateScope())
     {
         context.Database.Migrate();
         app.Logger.LogInformation("Database migrated successfully");
-        
-        // Add sample data if no todos exist
+
+        // Add multiple sample todos if none exist
         if (!context.TodoItems.Any())
         {
-            context.TodoItems.Add(new TodoItem
+            var todos = new List<TodoItem>
             {
-                Title = "Sample Todo Item",
-                Description = "This is a sample todo item",
-                Priority = 2,
-                CreatedAt = DateTime.UtcNow
-            });
+                new TodoItem
+                {
+                    Title = "Buy groceries",
+                    Description = "Milk, Bread, Eggs, Cheese",
+                    Priority = 1,
+                    CreatedAt = DateTime.UtcNow
+                },
+                new TodoItem
+                {
+                    Title = "Finish project report",
+                    Description = "Complete the final draft and send to manager",
+                    Priority = 3,
+                    CreatedAt = DateTime.UtcNow
+                },
+                new TodoItem
+                {
+                    Title = "Book flight tickets",
+                    Description = "Book tickets for vacation",
+                    Priority = 2,
+                    CreatedAt = DateTime.UtcNow
+                }
+            };
+            context.TodoItems.AddRange(todos);
             context.SaveChanges();
-            app.Logger.LogInformation("Sample data added successfully");
+            app.Logger.LogInformation("Sample todo items added successfully");
         }
     }
     catch (Exception ex)
