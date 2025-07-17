@@ -14,13 +14,9 @@ builder.Services.AddSwaggerGen(c =>
     c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "TodoApi.xml"), true);
 });
 
-// Configure Entity Framework with PostgreSQL
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
-    $"Host={Environment.GetEnvironmentVariable("DB_HOST") ?? "localhost"};" +
-    $"Port={Environment.GetEnvironmentVariable("DB_PORT") ?? "5432"};" +
-    $"Database={Environment.GetEnvironmentVariable("DB_NAME") ?? "todoapi"};" +
-    $"Username={Environment.GetEnvironmentVariable("DB_USER") ?? "postgres"};" +
-    $"Password={Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "password"}";
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("❌ Missing connection string: DefaultConnection");
 
 builder.Services.AddDbContext<TodoContext>(options =>
     options.UseNpgsql(connectionString));
