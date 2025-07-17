@@ -25,8 +25,16 @@ spec:
               value: "Production"
             - name: ASPNETCORE_URLS
               value: "http://+:{{ .Values.backend.port }}"
-            - name: ConnectionStrings__DefaultConnection
+            - name: DB_HOST
+              value: "{{ .Values.database.host }}"
+            - name: DB_PORT
+              value: "{{ .Values.database.port }}"
+            - name: DB_NAME
+              value: "{{ .Values.database.name }}"
+            - name: DB_USER
+              value: "{{ .Values.database.username }}"
+            - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: postgres
-                  key: POSTGRES_CONNECTION_STRING
+                  key: POSTGRES_PASSWORD
