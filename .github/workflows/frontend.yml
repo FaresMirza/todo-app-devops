@@ -17,34 +17,25 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Log in to Azure Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.ACR_LOGIN_SERVER }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+
       - name: Build Docker image
         env:
           DOCKER_BUILDKIT: "0"
         run: |
-          docker build -t ${{ secrets.ACR_LOGIN_SERVER }}/todo-frontend:v${{ github.run_number }} ./frontend
-
-      - name: Save image as artifact
-        run: |
-          docker save ${{ secrets.ACR_LOGIN_SERVER }}/todo-frontend:v${{ github.run_number }} | gzip > image.tar.gz
-
-      - name: Upload image artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: todo-frontend-image
-          path: image.tar.gz
+          docker build -t acrtodoappdev001.azurecr.io/todo-frontend:v${{ github.run_number }} ./frontend
 
   push:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Download image artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: todo-frontend-image
-
-      - name: Load Docker image
-        run: |
-          gunzip -c image.tar.gz | docker load
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Log in to Azure Container Registry
         uses: docker/login-action@v3
@@ -55,7 +46,7 @@ jobs:
 
       - name: Push Docker image
         run: |
-          docker push ${{ secrets.ACR_LOGIN_SERVER }}/todo-frontend:v${{ github.run_number }}
+          docker push acrtodoappdev001.azurecr.io/todo-frontend:v${{ github.run_number }}
 
   update-helm:
     needs: push
@@ -66,11 +57,14 @@ jobs:
 
       - name: Update Helm values.yaml
         run: |
-          sed -i 's|image: .*/todo-frontend:.*|image: ${{ secrets.ACR_LOGIN_SERVER }}/todo-frontend:v${{ github.run_number }}|' helm/todo-app/values.yaml
+          # Update the image tag in Helm values
+          sed -i 's|image: acrtodoappdev001.azurecr.io/todo-frontend:.*|image: acrtodoappdev001.azurecr.io/todo-frontend:v${{ github.run_number }}|' helm/todo-app/values.yaml
 
+          # Configure git
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
 
+          # Commit and push changes
           git add helm/todo-app/values.yaml
-          git commit -m "Update frontend image tag to v${{ github.run_number }}" || echo "No changes to commit"
+          git commit -m "Update frontend image tag to v${{ github.run_number }}" || exit 0
           git push
