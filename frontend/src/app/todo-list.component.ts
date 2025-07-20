@@ -38,7 +38,7 @@ declare var Chart: any;
         </form>
         <div class="chart-section">
           <div class="chart-card">
-            <h3 class="chart-title">🔥 Priority Chart</h3>
+            <h3 class="chart-title">🔥 Priority Chart 🔥</h3>
             <canvas id="priorityChart" width="400" height="220"></canvas>
           </div>
         </div>
