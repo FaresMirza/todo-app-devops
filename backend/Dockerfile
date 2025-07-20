@@ -1,40 +1,23 @@
-# Use the official .NET 9.0 runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
-WORKDIR /app
-EXPOSE 8080
-
-# Use the official .NET 9.0 SDK image for building
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
-WORKDIR /src
-
-# Copy project files and restore dependencies
-COPY ["src/TodoApi/TodoApi.csproj", "TodoApi/"]
-RUN dotnet restore "TodoApi/TodoApi.csproj"
-
-# Copy the rest of the application code
-COPY src/ .
-WORKDIR "/src/TodoApi"
-
-# Build the application
-RUN dotnet build "TodoApi.csproj" -c Release -o /app/build
-
-# Publish the application
-FROM build AS publish
-RUN dotnet publish "TodoApi.csproj" -c Release -o /app/publish /p:UseAppHost=false
-
-# Final stage - runtime image
-FROM base AS final
+FROM node:20-alpine as build
 WORKDIR /app
 
-# Create a non-root user
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+RUN npm run build -- --output-path=dist/frontend --base-href=/
+
+FROM node:20-alpine as serve
+WORKDIR /app
+
 RUN adduser --disabled-password --home /app --gecos '' appuser && chown -R appuser /app
+
+COPY --from=build /app/dist/frontend/browser ./
+
+RUN npm install -g http-server
+
+EXPOSE 80
+
 USER appuser
 
-# Copy the published application
-COPY --from=publish /app/publish .
-
-# Set environment variables
-ENV ASPNETCORE_URLS=http://+:8080
-ENV ASPNETCORE_ENVIRONMENT=Production
-
-ENTRYPOINT ["dotnet", "TodoApi.dll"]
+CMD [ "http-server", "-p", "80", "." ]
