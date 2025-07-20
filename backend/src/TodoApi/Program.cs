@@ -19,6 +19,7 @@ builder.Services.AddSwaggerGen(c =>
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 if (string.IsNullOrWhiteSpace(connectionString))
 {
+    
     // Fallback to environment variable for containerized deployments
     connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
 }

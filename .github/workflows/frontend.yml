@@ -50,6 +50,7 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
 
+          git add helm/todo-app/values.yaml
           git pull --rebase origin main
 
           # Commit and push changes
