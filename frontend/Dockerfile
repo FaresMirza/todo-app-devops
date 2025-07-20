@@ -17,7 +17,6 @@ COPY --from=build /app/dist/frontend/browser ./
 
 RUN npm install -g http-server
 
-# ✅ استخدام منفذ آمن
 EXPOSE 8080
 USER appuser
 
