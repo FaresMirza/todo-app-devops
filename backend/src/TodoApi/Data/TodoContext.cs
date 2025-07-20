@@ -24,6 +24,7 @@ public class TodoContext : DbContext
             entity.HasIndex(e => e.IsCompleted);
             entity.HasIndex(e => e.CreatedAt);
         });
+        
     }
 }
 

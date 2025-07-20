@@ -50,10 +50,8 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
 
-          git add helm/todo-app/values.yaml
-          git pull --rebase origin main
-
           # Commit and push changes
           git add helm/todo-app/values.yaml
           git commit -m "Update frontend image tag to v${{ github.run_number }}" || exit 0
+          git pull --rebase origin main
           git push
