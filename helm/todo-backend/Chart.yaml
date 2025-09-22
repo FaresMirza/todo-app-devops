@@ -1,0 +1,16 @@
+apiVersion: v2
+name: todo-backend
+description: Todo Backend API Helm chart
+version: 0.1.0
+appVersion: "1.0"
+maintainers:
+  - name: FaresMirza
+    email: fares@example.com
+keywords:
+  - todo
+  - api
+  - backend
+  - dotnet
+  - kubernetes
+sources:
+  - https://github.com/FaresMirza/todo-app-devops
