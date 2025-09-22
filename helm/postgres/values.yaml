@@ -1,5 +1,5 @@
 postgres:
-  image: your-dockerhub-username/todo-postgres:v1
+  image: faresmirza/todo-postgres:v1
   database: tododb
   username: todouser
   password: todopassword
