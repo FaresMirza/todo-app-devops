@@ -1,5 +1,15 @@
 apiVersion: v2
 name: postgres
-description: Simple PostgreSQL Helm chart
+description: PostgreSQL Database Helm chart
 version: 0.1.0
 appVersion: "15"
+maintainers:
+  - name: FaresMirza
+    email: fares@example.com
+keywords:
+  - database
+  - postgres
+  - postgresql
+  - kubernetes
+sources:
+  - https://github.com/FaresMirza/todo-app-devops

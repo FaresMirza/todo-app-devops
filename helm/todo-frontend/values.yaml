@@ -1,0 +1,13 @@
+frontend:
+  name: todo-frontend
+  image: your-dockerhub-username/todo-frontend:v56
+  port: 8080
+  replicas: 2
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  host: todo.local

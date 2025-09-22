@@ -10,13 +10,6 @@ spec:
       http:
         paths:
           - pathType: Prefix
-            path: /api
-            backend:
-              service:
-                name: {{ .Values.backend.name }}
-                port:
-                  number: 80
-          - pathType: Prefix
             path: /
             backend:
               service:

@@ -1,0 +1,16 @@
+backend:
+  name: todo-api
+  image: your-dockerhub-username/todo-api:v23
+  port: 8080
+  replicas: 2
+
+service:
+  type: ClusterIP
+  port: 80
+
+database:
+  host: postgres
+  port: 5432
+  name: tododb
+  username: todouser
+  password: todopassword

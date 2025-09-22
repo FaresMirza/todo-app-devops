@@ -1,6 +1,6 @@
 apiVersion: v2
-name: todo-api
-description: Simple Todo API Helm chart
+name: todo-frontend
+description: Todo Frontend Helm chart
 version: 0.1.0
 appVersion: "1.0"
 maintainers:
@@ -8,8 +8,8 @@ maintainers:
     email: fares@example.com
 keywords:
   - todo
-  - api
-  - dotnet
+  - frontend
+  - angular
   - kubernetes
 sources:
   - https://github.com/FaresMirza/todo-app-devops
