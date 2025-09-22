@@ -1,0 +1,6 @@
+app:
+  name: todo-frontend
+  wave_index: "3"
+  project: default
+  path: helm/todo-frontend
+  namespace: todo-app
