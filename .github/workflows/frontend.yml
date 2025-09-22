@@ -54,16 +54,3 @@ jobs:
           git commit -m "Update frontend image tag to v${{ github.run_number }}" || exit 0
           git pull --rebase origin main
           git push
-
-      - name: Trigger ArgoCD Sync
-        run: |
-          # For local development, trigger ArgoCD sync via webhook
-          # ArgoCD webhook URL for local cluster (using port-forward)
-          curl -X POST "http://localhost:8080/api/webhook" \
-            -H "Content-Type: application/json" \
-            -d '{
-              "repository": {
-                "url": "https://github.com/FaresMirza/todo-app-devops"
-              },
-              "ref": "refs/heads/main"
-            }' || echo "Webhook call failed, ArgoCD will sync on next poll (3 minutes)"
