@@ -57,10 +57,13 @@ spec:
         server: https://kubernetes.default.svc
         namespace: "{{.app.namespace}}"
       syncPolicy:
-        automated:
-          prune: true
-          selfHeal: true
         syncOptions:
           - CreateNamespace=true
           - ApplyOutOfSyncOnly=true
           - ServerSideApply=false
+        retry:
+          limit: 5
+          backoff:
+            duration: 5s
+            factor: 2
+            maxDuration: 3m
