@@ -1,4 +1,6 @@
-# .NET 9.0 ToDo App – Fullstack DevOps on AKS
+# Todo App DevOps
+
+Test sync waves - $(date) .NET 9.0 ToDo App – Fullstack DevOps on AKS
 
 ## 🆕 Angular Frontend Included
 
