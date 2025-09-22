@@ -1,6 +1,6 @@
 frontend:
   name: todo-frontend
-  image: faresmirza/todo-frontend:v59
+  image: faresmirza/todo-frontend:v60
   port: 8080
   replicas: 2
 
