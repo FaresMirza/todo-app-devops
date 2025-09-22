@@ -1,5 +1,5 @@
 postgres:
-  image: faresmirza/todo-postgres:v3
+  image: faresmirza/todo-postgres:v4
   database: tododb
   username: todouser
   password: todopassword
