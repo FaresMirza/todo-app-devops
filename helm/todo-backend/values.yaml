@@ -1,6 +1,6 @@
 backend:
   name: todo-api
-  image: your-dockerhub-username/todo-api:v23
+  image: faresmirza/todo-api:v25
   port: 8080
   replicas: 2
 
