@@ -20,6 +20,7 @@ RUN dotnet build "TodoApi.csproj" -c Release -o /app/build
 
 # Publish the application
 FROM build AS publish
+# UseAppHost=false to avoid creating a platform-specific executable like .exe on Windows only dll
 RUN dotnet publish "TodoApi.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 # Final stage - runtime image
@@ -34,7 +35,12 @@ USER appuser
 COPY --from=publish /app/publish .
 
 # Set environment variables
+# Listen on all network interfaces (not just localhost) at port 8080
 ENV ASPNETCORE_URLS=http://+:8080
+# Set the environment to Production:
+# • Loads appsettings.Production.json
+# • Reduces log details (better for production)
+# • Disables debug-only features
 ENV ASPNETCORE_ENVIRONMENT=Production
 
 ENTRYPOINT ["dotnet", "TodoApi.dll"]

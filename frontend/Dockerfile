@@ -5,6 +5,7 @@ COPY package*.json ./
 RUN npm install
 
 COPY . .
+# --base-href=/ Downloads files from the root 
 RUN npm run build -- --output-path=dist/frontend --base-href=/
 
 FROM node:20-alpine as serve
