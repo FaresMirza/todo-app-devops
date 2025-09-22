@@ -1,0 +1,66 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: todo-app-apps
+  namespace: argocd
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+
+  generators:
+  - git:
+      repoURL: https://github.com/FaresMirza/todo-app-devops
+      revision: main
+      files:
+        - path: helm/*/config.yaml
+
+  strategy:
+    type: RollingSync
+    rollingSync:
+      steps:
+        - matchExpressions:
+            - key: wave
+              operator: In
+              values: ["1"]
+          maxUpdate: 100%
+        - matchExpressions:
+            - key: wave
+              operator: In
+              values: ["2"]
+          maxUpdate: 100%
+        - matchExpressions:
+            - key: wave
+              operator: In
+              values: ["3"]
+          maxUpdate: 100%
+        - matchExpressions:
+            - key: wave
+              operator: In
+              values: ["4"]
+          maxUpdate: 100%
+
+  template:
+    metadata:
+      name: "{{.app.name}}"
+      labels:
+        wave: "{{.app.wave_index}}"
+      annotations:
+        argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+        argocd.argoproj.io/sync-wave: "{{.app.wave_index}}"   # 👈 propagate here
+    spec:
+      project: "{{.app.project}}"
+      source:
+        repoURL: https://github.com/FaresMirza/todo-app-devops
+        targetRevision: main
+        path: "{{.app.path}}"
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "{{.app.namespace}}"
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - ApplyOutOfSyncOnly=true
+          - ServerSideApply=false
