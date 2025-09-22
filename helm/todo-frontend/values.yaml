@@ -1,6 +1,6 @@
 frontend:
   name: todo-frontend
-  image: your-dockerhub-username/todo-frontend:v56
+  image: faresmirza/todo-frontend:v57
   port: 8080
   replicas: 2
 
