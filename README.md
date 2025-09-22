@@ -1,6 +1,7 @@
 # Todo App DevOps
 
-Test sync waves - $(date) .NET 9.0 ToDo App – Fullstack DevOps on AKS
+Test sync waves - Sun Sep 22 16:49:00 PDT 2025
+Fixed maxUpdate to enforce order .NET 9.0 ToDo App – Fullstack DevOps on AKS
 
 ## 🆕 Angular Frontend Included
 

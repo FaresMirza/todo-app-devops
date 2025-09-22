@@ -22,22 +22,22 @@ spec:
             - key: wave
               operator: In
               values: ["1"]
-          maxUpdate: 100%
+          maxUpdate: 1
         - matchExpressions:
             - key: wave
               operator: In
               values: ["2"]
-          maxUpdate: 100%
+          maxUpdate: 1
         - matchExpressions:
             - key: wave
               operator: In
               values: ["3"]
-          maxUpdate: 100%
+          maxUpdate: 1
         - matchExpressions:
             - key: wave
               operator: In
               values: ["4"]
-          maxUpdate: 100%
+          maxUpdate: 1
 
   template:
     metadata:
