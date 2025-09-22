@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: todo-frontend
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
   labels:
     app: todo-frontend
 spec:
