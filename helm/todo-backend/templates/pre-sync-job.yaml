@@ -1,0 +1,28 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: wait-for-postgres-job
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+    argocd.argoproj.io/hook: PreSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+  labels:
+    app: todo-api-prereq
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: wait-for-postgres
+        image: postgres:15
+        command:
+        - /bin/bash
+        - -c
+        - |
+          echo "Waiting for PostgreSQL to be ready..."
+          until pg_isready -h postgres -p 5432; do
+            echo "PostgreSQL is not ready yet... waiting 5 seconds"
+            sleep 5
+          done
+          echo "PostgreSQL is ready! Backend can start."
+  backoffLimit: 10
