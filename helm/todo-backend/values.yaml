@@ -1,6 +1,6 @@
 backend:
   name: todo-api
-  image: faresmirza/todo-api:v30
+  image: faresmirza/todo-api:v31
   port: 8080
   replicas: 2
 
