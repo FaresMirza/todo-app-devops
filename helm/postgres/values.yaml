@@ -1,5 +1,5 @@
 postgres:
-  image: faresmirza/todo-postgres:v10
+  image: faresmirza/todo-postgres:INVALID-TAG-FOR-TESTING
   database: tododb
   username: todouser
   password: todopassword

@@ -2,5 +2,5 @@ app:
   name: todo-postgres
   wave_index: "1"
   project: default
-  path: helm/postgre
+  path: helm/postgres
   namespace: todo-app
