@@ -17,6 +17,8 @@ spec:
   template:
     metadata:
       name: "{{.app.name}}"
+      labels:
+        wave: "wave{{.app.wave_index}}"
       annotations:
         argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
     spec:
